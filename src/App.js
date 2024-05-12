@@ -1,18 +1,22 @@
-import { BrowserRouter as Router } from 'react-router-dom'; // Import BrowserRouter
-import Header from './components/Header';
-import { Box } from '@mui/material';
-import Mainbody from './components/Mainbody';
-import Footer from './components/Footer';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import PendingNew from "./pages/PendingNew";
+import Dashboard from "./pages/Dashboard";
+import Completed from "./pages/Completed"
+import Admin from "./pages/Admin"
+import { SidebarProvider } from './contexts/SidebarContext';
 
 function App() {
   return (
-    <Router> 
-      <Box>
-        <Header />
-        <Mainbody />
-        <Footer />
-      </Box>
-    </Router> 
+    <SidebarProvider>
+    <Router>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/pending" element={<PendingNew />} />
+          <Route path="/completed" element={<Completed />} />
+          <Route path="/Admin" element={<Admin />} />
+        </Routes>
+    </Router>
+    </SidebarProvider>
   );
 }
 

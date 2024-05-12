@@ -2,7 +2,7 @@ import { Box, Button, Typography } from '@mui/material'
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { FaUser } from "react-icons/fa";
-import zentry from '../images/zentry_logo.webp';
+import zentry from '../assests/images/zentry_logo.webp';
 
 export default function Header() {
   return (
