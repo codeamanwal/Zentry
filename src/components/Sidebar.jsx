@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { NavLink } from "react-router-dom";
-import { useSidebar } from '../contexts/SidebarContext';
+import { useSidebar } from "../contexts/SidebarContext";
 import {
   HomeIcon,
   ExclamationCircleIcon,
@@ -27,7 +27,11 @@ export default function Sidebar() {
   return (
     <div>
       <Transition.Root show={sidebarOpen} as={Fragment}>
-        <Dialog as="div" className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
+        <Dialog
+          as="div"
+          className="relative z-50 lg:hidden"
+          onClose={setSidebarOpen}
+        >
           <div className="fixed inset-0 flex">
             {/* Transition for the sidebar */}
             <Transition.Child
@@ -44,13 +48,16 @@ export default function Sidebar() {
                   <div className="flex items-center justify-between">
                     <img
                       className="h-8 w-auto"
-                      src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
+                      src="../assets/images/zentry_logo.webp"
                       alt="Zentry"
                     />
                     <button
                       type="button"
                       className="rounded-md text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
-                      onClick={() => {console.log("je"); setSidebarOpen(false)}}
+                      onClick={() => {
+                        console.log("je");
+                        setSidebarOpen(false);
+                      }}
                     >
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                     </button>
@@ -63,12 +70,17 @@ export default function Sidebar() {
                           to={item.href}
                           className={({ isActive }) =>
                             classNames(
-                              isActive ? "bg-gray-800 text-white" : "text-gray-400 hover:text-white hover:bg-gray-800",
+                              isActive
+                                ? "bg-gray-800 text-white"
+                                : "text-gray-400 hover:text-white hover:bg-gray-800",
                               "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
                             )
                           }
                         >
-                          <item.icon className="mr-3 h-6 w-6" aria-hidden="true" />
+                          <item.icon
+                            className="mr-3 h-6 w-6"
+                            aria-hidden="true"
+                          />
                           {item.name}
                         </NavLink>
                       ))}
@@ -99,7 +111,9 @@ export default function Sidebar() {
                   to={item.href}
                   className={({ isActive }) =>
                     classNames(
-                      isActive ? "bg-gray-800 text-white" : "text-gray-400 hover:text-white hover:bg-gray-800",
+                      isActive
+                        ? "bg-gray-800 text-white"
+                        : "text-gray-400 hover:text-white hover:bg-gray-800",
                       "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
                     )
                   }
