@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, Link, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 export default function Pending() {
     const [inputs, setInputs] = useState({
