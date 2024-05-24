@@ -1,21 +1,12 @@
 import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
-import PendingForm from "../components/PendingFormModal";
-import React, { useState } from "react";
-import { Modal, Box, Button } from "@mui/material";
+import React from "react";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 export default function Pending() {
-  const [open, setOpen] = useState(false);
-  const [currentData, setCurrentData] = useState({});
-
-  const handleEdit = (data) => {
-    setCurrentData(data); // Set the current data to the row data
-    setOpen(true); // Open the modal
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const navigate = useNavigate();
+  
 
   const transactions = [
     {
@@ -35,6 +26,11 @@ export default function Pending() {
       quantity: 100,
     },
   ];
+
+  const handleEdit = () => {
+    const id = localStorage.getItem("id")
+    navigate(`/pending/edit/${id}`);
+  };
 
   return (
     <>
@@ -121,7 +117,7 @@ export default function Pending() {
                         <td className="px-3 py-4 text-sm text-right">
                           <Button
                             className="rounded-md bg-brown-600 px-3 py-1 text-sm font-semibold text-white hover:bg-brown-500"
-                            onClick={() => handleEdit(item)}
+                            onClick={() => handleEdit(item.id)}
                           >
                             Edit
                           </Button>
@@ -130,21 +126,6 @@ export default function Pending() {
                     ))}
                   </tbody>
                 </table>
-                <Modal
-                  open={open}
-                  onClose={handleClose}
-                  aria-labelledby="modal-title"
-                  aria-describedby="modal-description"
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Box>
-                    <PendingForm data={currentData} onClose={handleClose} />
-                  </Box>
-                </Modal>
               </div>
             </div>
           </main>
