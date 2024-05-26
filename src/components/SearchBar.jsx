@@ -4,9 +4,10 @@ import { useSidebar } from "../contexts/SidebarContext";
 import { Bars3Icon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const userNavigation = [
-  { name: "Your profile", href: "#" },
+  // { name: "Your profile", href: "#" },
   { name: "Sign out", href: "/" },
 ];
 
@@ -16,12 +17,20 @@ function classNames(...classes) {
 
 export default function SearchBar() {
   const navigate = useNavigate();
+  const [userId, setUserId] = useState()
 
   const handleSignout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("id");
     navigate(`/`);
   };
+
+  useEffect(() => {
+    const id = localStorage.getItem("id")
+    if(id) {
+      setUserId(id)
+    }
+  }, [])
 
   const { setSidebarOpen } = useSidebar();
 
@@ -61,7 +70,7 @@ export default function SearchBar() {
                   className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                   aria-hidden="true"
                 >
-                  Tom Cook
+                  {userId}
                 </span>
                 <ChevronDownIcon
                   className="ml-2 h-5 w-5 text-gray-400"

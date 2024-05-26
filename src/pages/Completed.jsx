@@ -1,7 +1,7 @@
 import React from "react";
 import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
-import TransactionTable from "../components/TransactionTable";
+import TransactionTable from "../components/TransactionTableCompleted";
 
 function Completed() {
   return (

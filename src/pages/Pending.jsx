@@ -3,10 +3,51 @@ import SearchBar from "../components/SearchBar";
 import React from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 export default function Pending() {
   const navigate = useNavigate();
-  
+  const [settlementInstructionPending, setSettlementInstructionPending] =
+    useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const token = localStorage.getItem("jwtToken");
+      console.log("token", token);
+      if (!token) {
+        navigate("/");
+      }
+      try {
+        const response = await fetch(
+          "https://zentry-app.azurewebsites.net/api/zentry/party/settlementInstructions/search",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              settlementInstructionStatus: "PENDING",
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Authentication Fault");
+        }
+
+        const settlementInstructionPending = await response.json();
+        console.log(
+          "settlementInstructionPending",
+          settlementInstructionPending
+        );
+        setSettlementInstructionPending(settlementInstructionPending);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const transactions = [
     {
@@ -27,9 +68,9 @@ export default function Pending() {
     },
   ];
 
-  const handleEdit = () => {
-    const id = localStorage.getItem("id")
-    navigate(`/pending/edit/${id}`);
+  const handleEdit = (settlementId) => {
+    // const id = localStorage.getItem("id");
+    navigate(`/pending/edit/${settlementId}`);
   };
 
   return (
@@ -46,86 +87,112 @@ export default function Pending() {
                     List of pending SSI Confirmations
                   </h2>
                 </div>
-                <table className="min-w-full divide-y divide-gray-300">
-                  <thead className="bg-gray-200">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        ID
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Unique Ref
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Account
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Email
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        ISIN
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Quantity
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      >
-                        Action
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map((item) => (
-                      <tr key={item.id}>
-                        <td className="px-3 py-4 text-sm text-gray-900">
-                          {item.id}
-                        </td>
-                        <td className="px-3 py-4 text-sm text-gray-900">
-                          {item.uniqueRef}
-                        </td>
-                        <td className="px-3 py-4 text-sm text-gray-900">
-                          {item.account}
-                        </td>
-                        <td className="px-3 py-4 text-sm text-gray-900">
-                          {item.email}
-                        </td>
-                        <td className="px-3 py-4 text-sm text-gray-900">
-                          {item.isin}
-                        </td>
-                        <td className="px-3 py-4 text-sm text-gray-900">
-                          {item.quantity}
-                        </td>
-                        <td className="px-3 py-4 text-sm text-right">
-                          <Button
-                            className="rounded-md bg-brown-600 px-3 py-1 text-sm font-semibold text-white hover:bg-brown-500"
-                            onClick={() => handleEdit(item.id)}
-                          >
-                            Edit
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <div className="px-4 sm:px-6 lg:px-8">
+                  <div className="mt-8 flow-root">
+                    <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                      <div className="inline-block min-w-full py-2 align-middle"></div>
+                      <table className="min-w-full divide-y divide-gray-300">
+                        <thead className="bg-gray-200">
+                          <tr>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              ID
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Unique Ref
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Account
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Email
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              ISIN
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Status
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Settlement Instruction
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Quantity
+                            </th>
+                            <th
+                              scope="col"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                            >
+                              Action
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {settlementInstructionPending &&
+                            settlementInstructionPending.map((item, index) => (
+                              <tr key={item.settlementInstructionId}>
+                                <td className="px-3 py-4 text-sm text-gray-900">
+                                  {index + 1}
+                                </td>
+                                <td className="px-3 py-4 text-sm text-gray-900">
+                                  {item.settlementInstructionId}
+                                </td>
+                                <td className="px-3 py-4 text-sm text-gray-900">
+                                  {item.accountParty.accountName}
+                                </td>
+                                <td className="px-3 py-4 text-sm text-gray-900">
+                                  {item.contactParty.emailId}
+                                </td>
+                                <td className="px-3 py-4 text-sm text-gray-900">
+                                  {item.securitiesIdScheme}
+                                </td>
+                                <td className="px-3 py-4 text-sm text-gray-500">
+                                  {item.settlementInstructionStatus}
+                                </td>
+                                <td className="px-3 py-4 text-sm text-gray-500"></td>
+                                <td className="px-3 py-4 text-sm text-gray-900">
+                                  {item.amount}
+                                </td>
+                                <td className="px-3 py-4 text-sm text-right">
+                                  <Button
+                                    className="rounded-md bg-brown-600 px-3 py-1 text-sm font-semibold text-white hover:bg-brown-500"
+                                    onClick={() =>
+                                      handleEdit(item.settlementInstructionId)
+                                    }
+                                  >
+                                    Edit
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </main>

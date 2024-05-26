@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useParams } from "react-router-dom";
@@ -6,8 +6,10 @@ import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
 
 export default function PendingForm({ onClose }) {
-  const { id } = useParams();
+  const { settlementId } = useParams();
   const [data, setData] = useState({});
+
+  console.log('settlementId',settlementId)
 
   const [inputs, setInputs] = useState({
     input1: "CGCTUS66",
@@ -36,10 +38,52 @@ export default function PendingForm({ onClose }) {
     input24: "",
   });
 
+  const [inputs1, setInputs1] = useState({
+    BUYR: ["CGCTUS66", "1234"],
+    RECU: ["B0FCU533LAX","ABCD"],
+    REI1: ["IRVTUS3NXXXX","XYZ"],
+    REAG: ["EGSP"," ", " ", ""],
+    PSET_1: ["00987", ""],
+    SELL: ["SICVFRPPXXXX", ""],
+    DECU: ["", ""],
+    DEI1: ["", ""],
+    DEAG: ["EGSP", "", "05678"],
+    PSET: ["SICVFRPPXXXX", ""]
+  });
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setInputs((prev) => ({ ...prev, [name]: value }));
   };
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken")
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://zentry-app.azurewebsites.net/api/zentry/party/settlementInstructions/${settlementId}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Something went wrong");
+        }
+        const settlementInstructionID = await response.json();
+
+        console.log("settlementInstructionID", settlementInstructionID);
+
+        setData(settlementInstructionID);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -55,7 +99,7 @@ export default function PendingForm({ onClose }) {
               <form className="space-y-8 divide-y divide-gray-300">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg leading-6 font-medium text-gray-900">
-                    Pending SSI Confirmation: UREF_1
+                    Pending SSI Confirmation: {data?.settlementInstructionId}
                   </h2>
                 </div>
 
@@ -75,7 +119,8 @@ export default function PendingForm({ onClose }) {
                           id="username"
                           autoComplete="username"
                           className="block flex-1 border-0 bg-transparent py-1.5 pl- text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 pl-3"
-                          placeholder="UREF_1"
+                          placeholder={data?.settlementInstructionId || "Loading..."}
+                          disabled
                         />
                       </div>
                     </div>
@@ -93,7 +138,8 @@ export default function PendingForm({ onClose }) {
                         name="account"
                         id="account"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-3"
-                        placeholder="Account_1"
+                        placeholder={data?.accountParty?.accountName || "Loading..."}
+                        disabled
                       />
                     </div>
                   </div>
@@ -111,7 +157,8 @@ export default function PendingForm({ onClose }) {
                         name="email"
                         type="email"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3"
-                        placeholder="test1@test.com"
+                        placeholder={data?.contactParty?.emailId || "Loading..."}
+                        disabled
                       />
                     </div>
                   </div>
@@ -128,7 +175,8 @@ export default function PendingForm({ onClose }) {
                         name="isin"
                         id="isin"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3"
-                        placeholder="ISIN_1"
+                        placeholder={data?.securitiesIdScheme || "Loading..."}
+                        disabled
                       />
                     </div>
                   </div>
@@ -146,7 +194,8 @@ export default function PendingForm({ onClose }) {
                         name="quantity"
                         type="number"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3"
-                        placeholder="100"
+                        placeholder={data?.amount || "Loading..."}
+                        disabled
                       />
                     </div>
                   </div>
@@ -221,7 +270,7 @@ export default function PendingForm({ onClose }) {
                             },
                           }}
                         >
-                          <label>96Q</label>
+                          <label>95Q</label>
                           <input
                             onChange={handleInputChange}
                             type="text"
@@ -278,7 +327,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          RECU
                         </Typography>
                         <Box
                           sx={{
@@ -346,7 +395,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          REI1
                         </Typography>
                         <Box
                           sx={{
@@ -414,7 +463,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          REAG
                         </Typography>
                         <Box
                           sx={{
@@ -503,7 +552,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          PSET
                         </Typography>
                         <Box
                           sx={{
@@ -592,7 +641,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          SELL
                         </Typography>
                         <Box
                           sx={{
@@ -660,7 +709,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          DECU
                         </Typography>
                         <Box
                           sx={{
@@ -718,7 +767,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          DEI1
                         </Typography>
                         <Box
                           sx={{
@@ -776,7 +825,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          DEAG
                         </Typography>
                         <Box
                           sx={{
@@ -864,7 +913,7 @@ export default function PendingForm({ onClose }) {
                             padding: "0 5px",
                           }}
                         >
-                          BUYR
+                          PSET
                         </Typography>
                         <Box
                           sx={{
