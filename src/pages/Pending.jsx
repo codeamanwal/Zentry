@@ -1,19 +1,22 @@
 import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
 import React from "react";
-import { Button } from "@mui/material";
+import { Modal, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ViewPendingForm from "../components/ViewPendingForm";
 
 export default function Pending() {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [settlementID, setSettlementID] = useState();
   const [settlementInstructionPending, setSettlementInstructionPending] =
     useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("jwtToken");
-      console.log("token", token);
+      // console.log("token", token);
       if (!token) {
         navigate("/");
       }
@@ -37,10 +40,7 @@ export default function Pending() {
         }
 
         const settlementInstructionPending = await response.json();
-        console.log(
-          "settlementInstructionPending",
-          settlementInstructionPending
-        );
+        // console.log("settlementInstructionPending",settlementInstructionPending);
         setSettlementInstructionPending(settlementInstructionPending);
       } catch (error) {
         console.log(error);
@@ -49,28 +49,37 @@ export default function Pending() {
     fetchData();
   }, []);
 
-  const transactions = [
-    {
-      id: 1,
-      uniqueRef: "UREF_1",
-      account: "Account_1",
-      email: "test1@test.com",
-      isin: "ISIN_1",
-      quantity: 10,
-    },
-    {
-      id: 2,
-      uniqueRef: "UREF_2",
-      account: "Account_2",
-      email: "test2@test.com",
-      isin: "ISIN_2",
-      quantity: 100,
-    },
-  ];
+  // const transactions = [
+  //   {
+  //     id: 1,
+  //     uniqueRef: "UREF_1",
+  //     account: "Account_1",
+  //     email: "test1@test.com",
+  //     isin: "ISIN_1",
+  //     quantity: 10,
+  //   },
+  //   {
+  //     id: 2,
+  //     uniqueRef: "UREF_2",
+  //     account: "Account_2",
+  //     email: "test2@test.com",
+  //     isin: "ISIN_2",
+  //     quantity: 100,
+  //   },
+  // ];
 
-  const handleEdit = (settlementId) => {
+  const handleEdit = (id) => {
     // const id = localStorage.getItem("id");
-    navigate(`/pending/edit/${settlementId}`);
+    navigate(`/pending/edit/${id}`);
+  };
+
+  const handleView = (id) => {
+    setSettlementID(id);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   return (
@@ -144,7 +153,7 @@ export default function Pending() {
                             </th>
                             <th
                               scope="col"
-                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                              className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 text-center"
                             >
                               Action
                             </th>
@@ -158,7 +167,8 @@ export default function Pending() {
                                   {index + 1}
                                 </td>
                                 <td className="px-3 py-4 text-sm text-gray-900">
-                                  {item.settlementInstructionId}
+                                  {"..." +
+                                    item.settlementInstructionId.slice(-5)}
                                 </td>
                                 <td className="px-3 py-4 text-sm text-gray-900">
                                   {item.accountParty.accountName}
@@ -167,16 +177,33 @@ export default function Pending() {
                                   {item.contactParty.emailId}
                                 </td>
                                 <td className="px-3 py-4 text-sm text-gray-900">
-                                  {item.securitiesIdScheme}
+                                  {item.securitiesId}
                                 </td>
                                 <td className="px-3 py-4 text-sm text-gray-500">
                                   {item.settlementInstructionStatus}
                                 </td>
-                                <td className="px-3 py-4 text-sm text-gray-500"></td>
+                                <td className="px-3 py-4 text-sm text-gray-500">
+                                  {item.settlementInstructionParty.partyChain.map(
+                                    (instruction, i) => (
+                                      <span key={i}>
+                                        {instruction.partyQualifier}
+                                        <br />
+                                      </span>
+                                    )
+                                  )}
+                                </td>
                                 <td className="px-3 py-4 text-sm text-gray-900">
                                   {item.amount}
                                 </td>
-                                <td className="px-3 py-4 text-sm text-right">
+                                <td className="px-3 py-4 text-sm text-center flex flex-col">
+                                  <Button
+                                    className="rounded-md bg-brown-600 px-3 py-1 text-sm font-semibold text-white hover:bg-brown-500"
+                                    onClick={() =>
+                                      handleView(item.settlementInstructionId)
+                                    }
+                                  >
+                                    View
+                                  </Button>
                                   <Button
                                     className="rounded-md bg-brown-600 px-3 py-1 text-sm font-semibold text-white hover:bg-brown-500"
                                     onClick={() =>
@@ -196,6 +223,24 @@ export default function Pending() {
               </div>
             </div>
           </main>
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-title"
+            aria-describedby="modal-description"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Box>
+              <ViewPendingForm
+                settlementId={settlementID}
+                onClose={handleClose}
+              />
+            </Box>
+          </Modal>
         </div>
       </div>
     </>

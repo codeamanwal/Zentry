@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { NavLink } from "react-router-dom";
 import { useSidebar } from "../contexts/SidebarContext";
@@ -24,6 +24,10 @@ function classNames(...classes) {
 export default function Sidebar() {
   const { sidebarOpen, setSidebarOpen } = useSidebar();
 
+  const handleNavLinkClick = () => {
+    setSidebarOpen(false);
+  };
+
   return (
     <div>
       <Transition.Root show={sidebarOpen} as={Fragment}>
@@ -33,7 +37,6 @@ export default function Sidebar() {
           onClose={setSidebarOpen}
         >
           <div className="fixed inset-0 flex">
-            {/* Transition for the sidebar */}
             <Transition.Child
               as={Fragment}
               enter="ease-in-out duration-300"
@@ -55,8 +58,7 @@ export default function Sidebar() {
                       type="button"
                       className="rounded-md text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                       onClick={() => {
-                        console.log("je");
-                        setSidebarOpen(false);
+                        setSidebarOpen(!sidebarOpen);
                       }}
                     >
                       <XMarkIcon className="h-6 w-6" aria-hidden="true" />
@@ -68,6 +70,7 @@ export default function Sidebar() {
                         <NavLink
                           key={item.name}
                           to={item.href}
+                          onClick={handleNavLinkClick}
                           className={({ isActive }) =>
                             classNames(
                               isActive

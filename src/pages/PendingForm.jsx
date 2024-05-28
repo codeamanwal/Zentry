@@ -1,63 +1,40 @@
 import React, { useEffect, useState } from "react";
-import { Box, Typography, IconButton } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
+import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
 
-export default function PendingForm({ onClose }) {
+export default function PendingForm() {
   const { settlementId } = useParams();
   const [data, setData] = useState({});
 
-  console.log('settlementId',settlementId)
-
-  const [inputs, setInputs] = useState({
-    input1: "CGCTUS66",
-    input2: "1234",
-    input3: "B0FCU533LAX",
-    input4: "ABCD",
-    input5: "IRVTUS3NXXXX",
-    input6: "XYZ",
-    input7: "EGSP",
-    input8: "",
-    input9: "00987",
-    input10: "",
-    input11: "SICVFRPPXXXX",
-    input12: "",
-    input13: "MSNYUS33XXXX",
-    input14: "9876",
-    input15: "",
-    input16: "",
-    input17: "",
-    input18: "",
-    input19: "EGSP",
-    input20: "",
-    input21: "05678",
-    input22: "",
-    input23: "SICVFRPPXXXX",
-    input24: "",
-  });
+  // console.log('settlementId',settlementId)
 
   const [inputs1, setInputs1] = useState({
-    BUYR: ["CGCTUS66", "1234"],
-    RECU: ["B0FCU533LAX","ABCD"],
-    REI1: ["IRVTUS3NXXXX","XYZ"],
-    REAG: ["EGSP"," ", " ", ""],
-    PSET_1: ["00987", ""],
-    SELL: ["SICVFRPPXXXX", ""],
-    DECU: ["", ""],
-    DEI1: ["", ""],
-    DEAG: ["EGSP", "", "05678"],
-    PSET: ["SICVFRPPXXXX", ""]
+    BUYR: ["", "", ""],
+    RECU: ["S", "", ""],
+    REI1: ["R", "", ""],
+    REAG: ["Q", "", "", "", ""],
+    PSET_1: ["", "", ""],
+    SELL: ["", "", ""],
+    DECU: ["", "", ""],
+    DEI1: ["", "", ""],
+    DEAG: ["", "", "", ""],
+    PSET_2: ["", "", ""],
   });
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    setInputs((prev) => ({ ...prev, [name]: value }));
+  const handleInputChange = (section, index) => (event) => {
+    const { value } = event.target;
+    console.log(value);
+    setInputs1((prev) => {
+      const newSection = [...prev[section]];
+      newSection[index] = value;
+      return { ...prev, [section]: newSection };
+    });
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken")
+    const token = localStorage.getItem("jwtToken");
     const fetchData = async () => {
       try {
         const response = await fetch(
@@ -67,7 +44,7 @@ export default function PendingForm({ onClose }) {
             headers: {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
-            }
+            },
           }
         );
         if (!response.ok) {
@@ -76,14 +53,39 @@ export default function PendingForm({ onClose }) {
         const settlementInstructionID = await response.json();
 
         console.log("settlementInstructionID", settlementInstructionID);
-
         setData(settlementInstructionID);
+        setInputs1(populateStateFromData(settlementInstructionID));
       } catch (error) {
         console.log(error);
       }
     };
+
     fetchData();
   }, []);
+
+  const populateStateFromData = (data) => {
+    const newState = { ...inputs1 };
+
+    data.settlementInstructionParty.partyChain.forEach((party) => {
+      const { partyQualifier, party: partyData } = party;
+      if (newState[partyQualifier]) {
+        newState[partyQualifier][0] = partyData.partyFormat || "";
+        newState[partyQualifier][1] = partyData.identifierCode || "";
+      }
+    });
+
+    data.settlementInstructionParty.proposedCounterPartyChain.forEach(
+      (party) => {
+        const { partyQualifier, party: partyData } = party;
+        if (newState[partyQualifier]) {
+          newState[partyQualifier][0] = partyData.partyFormat || "";
+          newState[partyQualifier][1] = partyData.identifierCode || "";
+        }
+      }
+    );
+
+    return newState;
+  };
 
   return (
     <>
@@ -119,7 +121,9 @@ export default function PendingForm({ onClose }) {
                           id="username"
                           autoComplete="username"
                           className="block flex-1 border-0 bg-transparent py-1.5 pl- text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 pl-3"
-                          placeholder={data?.settlementInstructionId || "Loading..."}
+                          placeholder={
+                            data?.settlementInstructionId || "Loading..."
+                          }
                           disabled
                         />
                       </div>
@@ -138,7 +142,9 @@ export default function PendingForm({ onClose }) {
                         name="account"
                         id="account"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-3"
-                        placeholder={data?.accountParty?.accountName || "Loading..."}
+                        placeholder={
+                          data?.accountParty?.accountName || "Loading..."
+                        }
                         disabled
                       />
                     </div>
@@ -157,7 +163,9 @@ export default function PendingForm({ onClose }) {
                         name="email"
                         type="email"
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3"
-                        placeholder={data?.contactParty?.emailId || "Loading..."}
+                        placeholder={
+                          data?.contactParty?.emailId || "Loading..."
+                        }
                         disabled
                       />
                     </div>
@@ -264,18 +272,29 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95Q</label>
+                          <select
+                            id="BUYR_label"
+                            name="BUYR_label"
+                            value={inputs1.BUYR[0]}
+                            onChange={handleInputChange("BUYR", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("BUYR", 1)}
                             type="text"
-                            name="input1"
-                            value={inputs.input1}
+                            name="BUYR_input1"
+                            value={inputs1.BUYR[1]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
@@ -287,6 +306,7 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -295,10 +315,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("BUYR", 2)}
                             type="text"
-                            name="input2"
-                            value={inputs.input2}
+                            name="BUYR_input2"
+                            value={inputs1.BUYR[2]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
@@ -332,18 +352,29 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95P</label>
+                          <select
+                            id="RECU_label"
+                            name="RECU_label"
+                            value={inputs1.RECU[0]}
+                            onChange={handleInputChange("RECU", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("RECU", 1)}
                             type="text"
-                            name="input3"
-                            value={inputs.input3}
+                            name="RECU_input1"
+                            value={inputs1.RECU[1]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
@@ -355,6 +386,7 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -363,10 +395,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("RECU", 2)}
                             type="text"
-                            name="input4"
-                            value={inputs.input4}
+                            name="RECU_input2"
+                            value={inputs1.RECU[2]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
@@ -400,18 +432,29 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95P</label>
+                          <select
+                            id="REI1_label"
+                            name="REI1_label"
+                            value={inputs1.REI1[0]}
+                            onChange={handleInputChange("REI1", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("REI1", 1)}
                             type="text"
-                            name="input5"
-                            value={inputs.input5}
+                            name="REI1_input1"
+                            value={inputs1.REI1[1]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
@@ -423,6 +466,7 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -431,10 +475,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("REI1", 2)}
                             type="text"
-                            name="input6"
-                            value={inputs.input6}
+                            name="REI1_input2"
+                            value={inputs1.REI1[2]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
@@ -467,56 +511,46 @@ export default function PendingForm({ onClose }) {
                         </Typography>
                         <Box
                           sx={{
-                            display: "flex",
-                            flexDirection: "row",
+                            display: "grid",
                             gap: "5px",
-                            flexWrap: "wrap",
+                            gridTemplateColumns: {
+                              md: "100px 200px",
+                              sm: "80px 160px",
+                            },
                           }}
                         >
-                          <label style={{ width: "95px" }}>95R</label>
+                          <select
+                            id="REAG_label"
+                            name="REAG_label"
+                            value={inputs1.REAG[0]}
+                            onChange={handleInputChange("REAG", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("REAG", 1)}
                             type="text"
-                            name="input7"
-                            value={inputs.input7}
+                            name="REAG_input1"
+                            value={
+                              inputs1.REAG[1] + " " + 
+                              inputs1.REAG[2] + " " +
+                              inputs1.REAG[3]
+                            }
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
                               outline: "auto",
                               border: "none",
-                              width: "80px",
-                            }}
-                          />
-                          <input
-                            onChange={handleInputChange}
-                            type="text"
-                            name="input8"
-                            value={inputs.input8}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                              width: "50px",
-                            }}
-                          />
-                          <input
-                            onChange={handleInputChange}
-                            type="text"
-                            name="input9"
-                            value={inputs.input9}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                              width: "70px",
                             }}
                           />
                         </Box>
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -525,10 +559,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("REAG", 4)}
                             type="text"
-                            name="input10"
-                            value={inputs.input10}
+                            name="REAG_input4"
+                            value={inputs1.REAG[4]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
@@ -557,18 +591,29 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95P</label>
+                          <select
+                            id="PSET1_label"
+                            name="PSET1_label"
+                            value={inputs1.PSET_1[0]}
+                            onChange={handleInputChange("PSET_1", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("PSET_1", 1)}
                             type="text"
-                            name="input11"
-                            value={inputs.input11}
+                            name="PSET1_input1"
+                            value={inputs1.PSET_1[1]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#e4efb6",
@@ -580,6 +625,7 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -588,29 +634,13 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("PSET_1", 2)}
                             type="text"
-                            name="input12"
-                            value={inputs.input12}
+                            name="PSET1_input2"
+                            value={inputs1.PSET_1[2]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          padding: "5px 20px",
-                          display: "flex",
-                          alignItems: "center",
-                        }}
-                      >
-                        <label>Confirm SSI</label>
-                        <input
-                          onChange={handleInputChange}
-                          type="checkbox"
-                          name="confirm"
-                          value=""
-                          style={{ marginLeft: "5px" }}
-                        />
                       </Box>
                     </Box>
                     <Box
@@ -646,18 +676,29 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95P</label>
+                          <select
+                            id="SELL_label"
+                            name="SELL_label"
+                            value={inputs1.SELL[0]}
+                            onChange={handleInputChange("SELL", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("SELL", 1)}
                             type="text"
-                            name="input13"
-                            value={inputs.input13}
+                            name="SELL_input1"
+                            value={inputs1.SELL[1]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#f4dcde",
@@ -669,6 +710,7 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -677,10 +719,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("SELL", 2)}
                             type="text"
-                            name="input14"
-                            value={inputs.input14}
+                            name="SELL_input2"
+                            value={inputs1.SELL[2]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#f4dcde",
@@ -697,6 +739,7 @@ export default function PendingForm({ onClose }) {
                           flexDirection: "column",
                           border: "1px solid lightgrey",
                           padding: "15px",
+                          margin: "4px 0 0 0",
                           position: "relative",
                         }}
                       >
@@ -714,24 +757,36 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95P</label>
+                          <select
+                            id="DECU_label"
+                            name="DECU_label"
+                            value={inputs1.DECU[0]}
+                            onChange={handleInputChange("DECU", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("DECU", 1)}
                             type="text"
-                            name="input15"
-                            value={inputs.input15}
+                            name="DECU_input1"
+                            value={inputs1.DECU[1]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -740,10 +795,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("DECU", 2)}
                             type="text"
-                            name="input16"
-                            value={inputs.input16}
+                            name="DECU_input2"
+                            value={inputs1.DECU[2]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
@@ -755,6 +810,7 @@ export default function PendingForm({ onClose }) {
                           flexDirection: "column",
                           border: "1px solid lightgrey",
                           padding: "15px",
+                          margin: "4px 0 0 0",
                           position: "relative",
                         }}
                       >
@@ -772,24 +828,36 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95P</label>
+                          <select
+                            id="DEI1_label"
+                            name="DEI1_label"
+                            value={inputs1.DEI1[0]}
+                            onChange={handleInputChange("DEI1", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("DEI1", 1)}
                             type="text"
-                            name="input17"
-                            value={inputs.input17}
+                            name="DEI1_input1"
+                            value={inputs1.DEI1[1]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -798,10 +866,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("DEI1", 2)}
                             type="text"
-                            name="input18"
-                            value={inputs.input18}
+                            name="DEI1_input2"
+                            value={inputs1.DEI1[2]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
@@ -813,6 +881,7 @@ export default function PendingForm({ onClose }) {
                           flexDirection: "column",
                           border: "1px solid lightgrey",
                           padding: "15px",
+                          margin: "4px 0 0 0",
                           position: "relative",
                         }}
                       >
@@ -829,55 +898,44 @@ export default function PendingForm({ onClose }) {
                         </Typography>
                         <Box
                           sx={{
-                            display: "flex",
-                            flexDirection: "row",
+                            display: "grid",
                             gap: "5px",
-                            flexWrap: "wrap",
+                            gridTemplateColumns: {
+                              md: "100px 200px",
+                              sm: "80px 160px",
+                            },
                           }}
                         >
-                          <label style={{ width: "95px" }}>95R</label>
+                          <select
+                            id="DEAG_label"
+                            name="DEAG_label"
+                            value={inputs1.DEAG[0]}
+                            onChange={handleInputChange("DEAG", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("DEAG", 1)}
                             type="text"
-                            name="input19"
-                            value={inputs.input19}
+                            name="DEAG_input1"
+                            value={inputs1.DEAG[1] + " " + 
+                            inputs1.DEAG[2] + " " +
+                            inputs1.DEAG[3]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#f4dcde",
                               outline: "auto",
                               border: "none",
-                              width: "80px",
-                            }}
-                          />
-                          <input
-                            onChange={handleInputChange}
-                            type="text"
-                            name="input20"
-                            value={inputs.input20}
-                            style={{
-                              border: "1px",
-                              padding: "5px",
-                              outline: "auto",
-                              width: "60px",
-                            }}
-                          />
-                          <input
-                            onChange={handleInputChange}
-                            type="text"
-                            name="input21"
-                            value={inputs.input21}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#f4dcde",
-                              outline: "auto",
-                              border: "none",
-                              width: "50px",
                             }}
                           />
                         </Box>
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -886,10 +944,10 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("DEAG", 4)}
                             type="text"
-                            name="input22"
-                            value={inputs.input22}
+                            name="DEAG_input4"
+                            value={inputs1.DEAG[4]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
@@ -901,6 +959,7 @@ export default function PendingForm({ onClose }) {
                           flexDirection: "column",
                           border: "1px solid lightgrey",
                           padding: "15px",
+                          margin: "4px 0 0 0",
                           position: "relative",
                         }}
                       >
@@ -918,18 +977,29 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
                             },
                           }}
                         >
-                          <label>95P</label>
+                          <select
+                            id="PSET2_label"
+                            name="PSET2_label"
+                            value={inputs1.PSET_2[0]}
+                            onChange={handleInputChange("PSET_2", 0)}
+                          >
+                            <option value="P">95P</option>
+                            <option value="Q">95Q</option>
+                            <option value="R">95R</option>
+                            <option value="S">95S</option>
+                          </select>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("PSET_2", 1)}
                             type="text"
-                            name="input23"
-                            value={inputs.input23}
+                            name="PSET2_input1"
+                            value={inputs1.PSET_2[1]}
                             style={{
                               padding: "5px",
                               backgroundColor: "#f4dcde",
@@ -941,6 +1011,7 @@ export default function PendingForm({ onClose }) {
                         <Box
                           sx={{
                             display: "grid",
+                            gap: "5px",
                             gridTemplateColumns: {
                               md: "100px 200px",
                               sm: "80px 160px",
@@ -949,15 +1020,32 @@ export default function PendingForm({ onClose }) {
                         >
                           <label>Account</label>
                           <input
-                            onChange={handleInputChange}
+                            onChange={handleInputChange("PSET_2", 2)}
                             type="text"
-                            name="input24"
-                            value={inputs.input24}
+                            name="PSET2_input2"
+                            value={inputs1.PSET_2[2]}
                             style={{ padding: "5px", outline: "auto" }}
                           />
                         </Box>
                       </Box>
                     </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      padding: "5px",
+                      display: "flex",
+                      alignItems: "center",
+                      margin: "10px 0 0 0",
+                    }}
+                  >
+                    <label>Confirm SSI</label>
+                    <input
+                      onChange={handleInputChange}
+                      type="checkbox"
+                      name="confirm"
+                      value=""
+                      style={{ marginLeft: "5px" }}
+                    />
                   </Box>
                 </div>
 
