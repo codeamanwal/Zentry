@@ -45,13 +45,13 @@ function Login() {
       try {
         const token = JSON.parse(text); // If the response is JSON, parse it
         console.log("Token:", token);
-        localStorage.setItem("token", token);
+        sessionStorage.setItem("token", token);
       } catch (e) {
         console.log("Response is not valid JSON");
-        localStorage.setItem("jwtToken", text); // Store the plain text if it's not JSON
+        sessionStorage.setItem("jwtToken", text); // Store the plain text if it's not JSON
       }
 
-      localStorage.setItem("id", username);
+      sessionStorage.setItem("id", username);
       navigate(`/dashboard`);
     } catch (error) {
       setError(error.message);

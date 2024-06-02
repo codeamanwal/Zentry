@@ -34,7 +34,7 @@ export default function PendingForm() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
+    const token = sessionStorage.getItem("jwtToken");
     const fetchData = async () => {
       try {
         const response = await fetch(

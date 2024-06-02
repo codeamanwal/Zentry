@@ -20,13 +20,13 @@ export default function SearchBar() {
   const [userId, setUserId] = useState()
 
   const handleSignout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("id");
+    sessionStorage.removeItem("jwtToken");
+    sessionStorage.removeItem("id");
     navigate(`/`);
   };
 
   useEffect(() => {
-    const id = localStorage.getItem("id")
+    const id = sessionStorage.getItem("id")
     if(id) {
       setUserId(id)
     }

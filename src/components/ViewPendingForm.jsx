@@ -31,7 +31,7 @@ export default function ViewPendingForm({ settlementId, onClose }) {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
+    const token = sessionStorage.getItem("jwtToken");
     const fetchData = async () => {
       try {
         const response = await fetch(
