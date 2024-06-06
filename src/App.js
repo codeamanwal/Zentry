@@ -6,6 +6,8 @@ import Pending from "./pages/Pending";
 import { SidebarProvider } from './contexts/SidebarContext';
 import PendingForm from './pages/PendingForm';
 import Login from './pages/Login';
+import PendingNew from './pages/PendingNew'
+import PendingFormNew from './pages/PendingFormNew'
 
 function App() {
   return (
@@ -15,9 +17,10 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/pending" element={<Pending />} />
-          <Route path="/pending/edit/:settlementId" element={<PendingForm />} />
+          <Route path="/pending/edit/:settlementId" element={<PendingFormNew />} />
           <Route path="/completed" element={<Completed />} />
           <Route path="/Admin" element={<Admin />} />
+          <Route path="/pendingNew" element={<PendingNew />} />
         </Routes>
     </Router>
     </SidebarProvider>

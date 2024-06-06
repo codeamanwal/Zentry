@@ -47,7 +47,7 @@ export default function Sidebar() {
               leaveTo="-translate-x-full"
             >
               <Dialog.Panel className="relative flex-1 w-full max-w-xs">
-                <div className="flex flex-col h-full overflow-y-auto bg-gray-900 p-6">
+                <div className="flex flex-col h-full overflow-y-auto bg-zentrybg p-6">
                   <div className="flex items-center justify-between">
                     <img
                       className="h-8 w-auto"
@@ -75,7 +75,7 @@ export default function Sidebar() {
                             classNames(
                               isActive
                                 ? "bg-gray-800 text-white"
-                                : "text-gray-400 hover:text-white hover:bg-gray-800",
+                                : "text-gray-400 hover:text-white hover:bg-black",
                               "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
                             )
                           }
@@ -98,12 +98,12 @@ export default function Sidebar() {
 
       <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0">
         {/* Static sidebar */}
-        <div className="flex flex-col flex-grow bg-gray-900 p-6">
+        <div className="flex flex-col flex-grow bg-zentrybg p-6">
           <div className="flex items-center flex-shrink-0">
             <img
               className="h-8 w-auto"
               src="../assets/images/zentry_logo.webp"
-              alt="Your Company"
+              alt="Zentry"
             />
           </div>
           <div className="mt-5 flex-1 flex flex-col">
