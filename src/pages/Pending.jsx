@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ViewPendingForm from "../components/ViewPendingForm";
 
-export default function Pending() {
+export default function PendingNew() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [settlementID, setSettlementID] = useState();
@@ -42,6 +42,7 @@ export default function Pending() {
 
         const settlementInstructionPending = await response.json();
         setSettlementInstructionPending(settlementInstructionPending);
+        console.log(settlementInstructionPending);
       } catch (error) {
         console.log(error);
         navigate("/"); // Navigate to home or login page on error
@@ -70,14 +71,14 @@ export default function Pending() {
       <div className="lg:pl-72">
         <SearchBar />
         <main className="py-10">
-          <div className="px-4 sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto p-5 bg-white rounded-md shadow">
+          <div className="sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto p-5 bg-white rounded-md shadow">
               <div className="space-y-8 divide-y divide-gray-300">
                 <h2 className="text-lg leading-6 font-medium text-gray-900 border-b pb-8">
                   List of pending SSI Confirmations
                 </h2>
               </div>
-              <div className="px-4 sm:px-6 lg:px-8">
+              <div className="px-4 sm:px-4 lg:px-6">
                 <div className="mt-8 flow-root">
                   <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div className="inline-block min-w-full py-2 align-middle">
@@ -85,28 +86,28 @@ export default function Pending() {
                         <thead className="bg-gray-200">
                           <tr>
                             <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                              ID
+                              Unique ID
                             </th>
                             <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                              Unique Ref
+                              Securities ID
                             </th>
                             <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                              Account
-                            </th>
-                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                              Email
-                            </th>
-                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                              ISIN
-                            </th>
-                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                              Status
-                            </th>
-                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                              Settlement Instruction
+                              Securities Name
                             </th>
                             <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                               Quantity
+                            </th>
+                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                              Party Account
+                            </th>
+                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                              Counter Party Account
+                            </th>
+                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                              Counter Party Domain
+                            </th>
+                            <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                              Party Settlement Instruction
                             </th>
                             <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 text-center">
                               Action
@@ -120,21 +121,24 @@ export default function Pending() {
                                 {index + 1}
                               </td>
                               <td className="px-3 py-4 text-sm text-gray-900">
-                                {"..." + item.settlementInstructionId.slice(-5)}
-                              </td>
-                              <td className="px-3 py-4 text-sm text-gray-900">
-                                {item.accountParty.accountName}
-                              </td>
-                              <td className="px-3 py-4 text-sm text-gray-900">
-                                {item.contactParty.emailId}
-                              </td>
-                              <td className="px-3 py-4 text-sm text-gray-900">
                                 {item.securitiesId}
                               </td>
-                              <td className="px-3 py-4 text-sm text-gray-500">
-                                {item.settlementInstructionStatus}
+                              <td className="px-3 py-4 text-sm text-gray-900">
+                                {item.securitiesName}
+                              </td>
+                              <td className="px-3 py-4 text-sm text-gray-900">
+                                {item.amount}
+                              </td>
+                              <td className="px-3 py-4 text-sm text-gray-900">
+                                {item.accountCounterParty.accountName}
                               </td>
                               <td className="px-3 py-4 text-sm text-gray-500">
+                                {item.accountCounterParty.accountNo}
+                              </td>
+                              <td className="px-3 py-4 text-sm text-gray-500">
+                                {item.accountCounterParty.domain}
+                              </td>
+                              <td className="px-3 py-4 text-sm text-gray-900">
                                 {item.settlementInstructionParty.partyChain.map(
                                   (instruction, i) => (
                                     <span key={i}>
@@ -143,9 +147,6 @@ export default function Pending() {
                                     </span>
                                   )
                                 )}
-                              </td>
-                              <td className="px-3 py-4 text-sm text-gray-900">
-                                {item.amount}
                               </td>
                               <td className="px-3 py-4 text-sm text-center flex flex-col">
                                 <Button
@@ -188,7 +189,10 @@ export default function Pending() {
           }}
         >
           <Box>
-            <ViewPendingForm settlementId={settlementID} onClose={handleClose} />
+            <ViewPendingForm
+              settlementId={settlementID}
+              onClose={handleClose}
+            />
           </Box>
         </Modal>
       </div>
