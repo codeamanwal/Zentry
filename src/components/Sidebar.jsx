@@ -11,9 +11,9 @@ import {
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-  { name: "Dashboard", href: "/dashboard", icon: HomeIcon },
-  { name: "Pending", href: "/pending", icon: ExclamationCircleIcon },
-  { name: "Completed", href: "/completed", icon: ClipboardDocumentCheckIcon },
+  { name: "Create SSI", href: "/dashboard", icon: HomeIcon },
+  { name: "Pending SSI", href: "/pending", icon: ExclamationCircleIcon },
+  { name: "Completed SSI", href: "/completed", icon: ClipboardDocumentCheckIcon },
   { name: "Admin", href: "/admin", icon: Cog8ToothIcon },
 ];
 
