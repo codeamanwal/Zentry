@@ -10,29 +10,47 @@ export default function PendingFormNew() {
   const { settlementId } = useParams();
   const [data, setData] = useState({});
 
-  // console.log('settlementId',settlementId)
-
-  const [inputs1, setInputs1] = useState({
-    BUYR: ["", "", ""],
-    RECU: ["S", "", ""],
-    REI1: ["R", "", ""],
-    REAG: ["Q", "", "", "", ""],
-    PSET_1: ["", "", ""],
-    SELL: ["", "", ""],
-    DECU: ["", "", ""],
-    DEI1: ["", "", ""],
-    DEAG: ["", "", "", ""],
-    PSET_2: ["", "", ""],
+  const [buyInputs, setBuyInputs] = useState({
+    BUYR: ["QP", "", ""],
+    RECU: ["P", "", ""],
+    REI1: ["P", "", ""],
+    REAG: ["P", "", "", "", ""],
+    PSET_1: ["P", "", ""],
+    proposed_BUYR: ["P", "", ""],
+    proposed_RECU: ["S", "", ""],
+    proposed_REI1: ["R", "", ""],
+    proposed_REAG: ["Q", "", "", "", ""],
+    proposed_PSET_1: ["P", "", ""],
   });
 
-  const handleInputChange = (section, index) => (event) => {
+  const [sellInputs, setSellInputs] = useState({
+    SELL: ["P", "", ""],
+    DECU: ["P", "", ""],
+    DEI1: ["P", "", ""],
+    DEAG: ["P", "", "", ""],
+    PSET_2: ["P", "", ""],
+    proposed_SELL: ["P", "", ""],
+    proposed_DECU: ["P", "", ""],
+    proposed_DEI1: ["P", "", ""],
+    proposed_DEAG: ["P", "", "", ""],
+    proposed_PSET_2: ["P", "", ""],
+  });
+
+  const handleInputChange = (section, index, isBuy) => (event) => {
     const { value } = event.target;
-    console.log(value);
-    setInputs1((prev) => {
-      const newSection = [...prev[section]];
-      newSection[index] = value;
-      return { ...prev, [section]: newSection };
-    });
+    if (isBuy) {
+      setBuyInputs((prev) => {
+        const newSection = [...prev[section]];
+        newSection[index] = value;
+        return { ...prev, [section]: newSection };
+      });
+    } else {
+      setSellInputs((prev) => {
+        const newSection = [...prev[section]];
+        newSection[index] = value;
+        return { ...prev, [section]: newSection };
+      });
+    }
   };
 
   useEffect(() => {
@@ -56,7 +74,8 @@ export default function PendingFormNew() {
 
         console.log("settlementInstructionID", settlementInstructionID);
         setData(settlementInstructionID);
-        setInputs1(populateStateFromData(settlementInstructionID));
+        setBuyInputs(populateStateFromData(settlementInstructionID, true));
+        setSellInputs(populateStateFromData(settlementInstructionID, false));
       } catch (error) {
         console.log(error);
       }
@@ -65,8 +84,8 @@ export default function PendingFormNew() {
     fetchData();
   }, []);
 
-  const populateStateFromData = (data) => {
-    const newState = { ...inputs1 };
+  const populateStateFromData = (data, isBuy) => {
+    const newState = isBuy ? { ...buyInputs } : { ...sellInputs };
 
     data.settlementInstructionParty.partyChain.forEach((party) => {
       const { partyQualifier, party: partyData } = party;
@@ -79,9 +98,11 @@ export default function PendingFormNew() {
     data.settlementInstructionParty.proposedCounterPartyChain.forEach(
       (party) => {
         const { partyQualifier, party: partyData } = party;
-        if (newState[partyQualifier]) {
-          newState[partyQualifier][0] = partyData.partyFormat || "";
-          newState[partyQualifier][1] = partyData.identifierCode || "";
+        if (newState[`proposed_${partyQualifier}`]) {
+          newState[`proposed_${partyQualifier}`][0] =
+            partyData.partyFormat || "";
+          newState[`proposed_${partyQualifier}`][1] =
+            partyData.identifierCode || "";
         }
       }
     );
@@ -223,7 +244,7 @@ export default function PendingFormNew() {
                   </div>
                 </div>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between flex-">
                   <form className="space-y-8 divide-y divide-gray-300">
                     <div className="mt-10 pt-10">
                       <Box
@@ -238,6 +259,8 @@ export default function PendingFormNew() {
                             flex: "1",
                             minWidth: "0",
                             display: "flex",
+                            justifyContent: "center",
+                            alignItems: "center",
                             gap: "14px",
                             flexDirection: "column",
                           }}
@@ -250,6 +273,8 @@ export default function PendingFormNew() {
                               border: "2px solid lightgrey",
                               padding: "15px",
                               position: "relative",
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}
                           >
                             <Typography
@@ -264,9 +289,12 @@ export default function PendingFormNew() {
                               BUYR Proposed
                             </Typography>
                             <DynamicInputField
-                              inputs={inputs1.BUYR}
+                              inputs={buyInputs.proposed_BUYR}
                               setInputs={(newValues) =>
-                                setInputs1({ ...inputs1, BUYR: newValues })
+                                setBuyInputs({
+                                  ...buyInputs,
+                                  proposed_BUYR: newValues,
+                                })
                               }
                               fieldId="BUYR"
                               labelOptions={[
@@ -289,10 +317,14 @@ export default function PendingFormNew() {
                             >
                               <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("BUYR", 2)}
+                                onChange={handleInputChange(
+                                  "proposed_BUYR",
+                                  2,
+                                  true
+                                )}
                                 type="text"
                                 name="BUYR_input2"
-                                value={inputs1.BUYR[2]}
+                                value={buyInputs.proposed_BUYR[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -313,10 +345,10 @@ export default function PendingFormNew() {
                               <select
                                 id="BUYR_label"
                                 name="BUYR_label"
-                                value={inputs1.BUYR[0]}
+                                value=""
                                 onChange={handleInputChange("BUYR", 0)}
                               >
-                                <option value="P">95P</option>
+                                <option value="P">70E::DECL</option>
                                 <option value="Q">95Q</option>
                                 <option value="R">95R</option>
                                 <option value="S">95S</option>
@@ -325,7 +357,7 @@ export default function PendingFormNew() {
                                 onChange={handleInputChange("BUYR", 1)}
                                 type="text"
                                 name="BUYR_input1"
-                                value={inputs1.BUYR[1]}
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -355,6 +387,22 @@ export default function PendingFormNew() {
                             >
                               RECU Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.proposed_RECU}
+                              setInputs={(newValues) =>
+                                setBuyInputs({
+                                  ...buyInputs,
+                                  proposed_RECU: newValues,
+                                })
+                              }
+                              fieldId="RECU"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -365,22 +413,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="RECU_label"
-                                name="RECU_label"
-                                value={inputs1.RECU[0]}
-                                onChange={handleInputChange("RECU", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("RECU", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_RECU",
+                                  2,
+                                  true
+                                )}
                                 type="text"
-                                name="RECU_input1"
-                                value={inputs1.RECU[1]}
+                                name="RECU_input2"
+                                value={buyInputs.proposed_RECU[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -398,12 +440,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("RECU", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="RECU_input2"
-                                value={inputs1.RECU[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -434,9 +486,12 @@ export default function PendingFormNew() {
                               REI1 Proposed
                             </Typography>
                             <DynamicInputField
-                              inputs={inputs1.REI1}
+                              inputs={buyInputs.proposed_REI1}
                               setInputs={(newValues) =>
-                                setInputs1({ ...inputs1, REI1: newValues })
+                                setBuyInputs({
+                                  ...buyInputs,
+                                  proposed_REI1: newValues,
+                                })
                               }
                               fieldId="REI1"
                               labelOptions={[
@@ -458,10 +513,47 @@ export default function PendingFormNew() {
                             >
                               <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("REI1", 2)}
+                                onChange={handleInputChange(
+                                  "proposed_REI1",
+                                  2,
+                                  true
+                                )}
                                 type="text"
                                 name="REI1_input2"
-                                value={inputs1.REI1[2]}
+                                value={buyInputs.proposed_REI1[2]}
+                                style={{
+                                  padding: "5px",
+                                  backgroundColor: "#fff",
+                                  border: "2px solid black",
+                                }}
+                              />
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "grid",
+                                gap: "5px",
+                                gridTemplateColumns: {
+                                  md: "100px 200px",
+                                  sm: "80px 160px",
+                                },
+                              }}
+                            >
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
+                              <input
+                                onChange={handleInputChange("BUYR", 1)}
+                                type="text"
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -491,6 +583,22 @@ export default function PendingFormNew() {
                             >
                               REAG Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.proposed_REAG}
+                              setInputs={(newValues) =>
+                                setBuyInputs({
+                                  ...buyInputs,
+                                  proposed_REAG: newValues,
+                                })
+                              }
+                              fieldId="REAG"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -501,28 +609,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="REAG_label"
-                                name="REAG_label"
-                                value={inputs1.REAG[0]}
-                                onChange={handleInputChange("REAG", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("REAG", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_REAG",
+                                  4,
+                                  true
+                                )}
                                 type="text"
-                                name="REAG_input1"
-                                value={
-                                  inputs1.REAG[1] +
-                                  " " +
-                                  inputs1.REAG[2] +
-                                  " " +
-                                  inputs1.REAG[3]
-                                }
+                                name="REAG_input4"
+                                value={buyInputs.proposed_REAG[4]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -540,12 +636,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("REAG", 4)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="REAG_input4"
-                                value={inputs1.REAG[4]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -575,6 +681,22 @@ export default function PendingFormNew() {
                             >
                               PSET Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.proposed_PSET_1}
+                              setInputs={(newValues) =>
+                                setBuyInputs({
+                                  ...buyInputs,
+                                  proposed_PSET_1: newValues,
+                                })
+                              }
+                              fieldId="PSET_1"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -585,22 +707,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="PSET1_label"
-                                name="PSET1_label"
-                                value={inputs1.PSET_1[0]}
-                                onChange={handleInputChange("PSET_1", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("PSET_1", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_PSET_1",
+                                  2,
+                                  true
+                                )}
                                 type="text"
-                                name="PSET1_input1"
-                                value={inputs1.PSET_1[1]}
+                                name="PSET1_input2"
+                                value={buyInputs.proposed_PSET_1[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -618,12 +734,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("PSET_1", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="PSET1_input2"
-                                value={inputs1.PSET_1[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -664,6 +790,19 @@ export default function PendingFormNew() {
                             >
                               BUYR
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.BUYR}
+                              setInputs={(newValues) =>
+                                setBuyInputs({ ...buyInputs, BUYR: newValues })
+                              }
+                              fieldId="BUYR"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -674,22 +813,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value={inputs1.BUYR[0]}
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("BUYR", 1)}
+                                onChange={handleInputChange("BUYR", 2, true)}
                                 type="text"
-                                name="BUYR_input1"
-                                value={inputs1.BUYR[1]}
+                                name="BUYR_input2"
+                                value={buyInputs.BUYR[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -707,12 +836,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("BUYR", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="BUYR_input2"
-                                value={inputs1.BUYR[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -742,6 +881,19 @@ export default function PendingFormNew() {
                             >
                               RECU
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.RECU}
+                              setInputs={(newValues) =>
+                                setBuyInputs({ ...buyInputs, RECU: newValues })
+                              }
+                              fieldId="RECU"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -752,22 +904,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="RECU_label"
-                                name="RECU_label"
-                                value={inputs1.RECU[0]}
-                                onChange={handleInputChange("RECU", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("RECU", 1)}
+                                onChange={handleInputChange("RECU", 2, true)}
                                 type="text"
-                                name="RECU_input1"
-                                value={inputs1.RECU[1]}
+                                name="RECU_input2"
+                                value={buyInputs.RECU[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -785,12 +927,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("RECU", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="RECU_input2"
-                                value={inputs1.RECU[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -820,6 +972,19 @@ export default function PendingFormNew() {
                             >
                               REI1
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.REI1}
+                              setInputs={(newValues) =>
+                                setBuyInputs({ ...buyInputs, REI1: newValues })
+                              }
+                              fieldId="REI1"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -830,22 +995,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="REI1_label"
-                                name="REI1_label"
-                                value={inputs1.REI1[0]}
-                                onChange={handleInputChange("REI1", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("REI1", 1)}
+                                onChange={handleInputChange("REI1", 2, true)}
                                 type="text"
-                                name="REI1_input1"
-                                value={inputs1.REI1[1]}
+                                name="REI1_input2"
+                                value={buyInputs.REI1[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -863,12 +1018,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("REI1", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="REI1_input2"
-                                value={inputs1.REI1[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -898,6 +1063,19 @@ export default function PendingFormNew() {
                             >
                               REAG
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.REAG}
+                              setInputs={(newValues) =>
+                                setBuyInputs({ ...buyInputs, REAG: newValues })
+                              }
+                              fieldId="REAG"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -908,28 +1086,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="REAG_label"
-                                name="REAG_label"
-                                value={inputs1.REAG[0]}
-                                onChange={handleInputChange("REAG", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("REAG", 1)}
+                                onChange={handleInputChange("REAG", 4, true)}
                                 type="text"
-                                name="REAG_input1"
-                                value={
-                                  inputs1.REAG[1] +
-                                  " " +
-                                  inputs1.REAG[2] +
-                                  " " +
-                                  inputs1.REAG[3]
-                                }
+                                name="REAG_input4"
+                                value={buyInputs.REAG[4]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -947,12 +1109,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("REAG", 4)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="REAG_input4"
-                                value={inputs1.REAG[4]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -982,6 +1154,19 @@ export default function PendingFormNew() {
                             >
                               PSET
                             </Typography>
+                            <DynamicInputField
+                              inputs={buyInputs.PSET_1}
+                              setInputs={(newValues) =>
+                                setBuyInputs({ ...buyInputs, PSET_1: newValues })
+                              }
+                              fieldId="PSET_1"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -992,22 +1177,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="PSET1_label"
-                                name="PSET1_label"
-                                value={inputs1.PSET_1[0]}
-                                onChange={handleInputChange("PSET_1", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("PSET_1", 1)}
+                                onChange={handleInputChange("PSET_1", 2, true)}
                                 type="text"
-                                name="PSET1_input1"
-                                value={inputs1.PSET_1[1]}
+                                name="PSET1_input2"
+                                value={buyInputs.PSET_1[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1025,12 +1200,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("PSET_1", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="PSET1_input2"
-                                value={inputs1.PSET_1[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1046,7 +1231,7 @@ export default function PendingFormNew() {
                           padding: "5px",
                           display: "flex",
                           alignItems: "center",
-                          justifyItems: "center",
+                          justifyContent: "center",
                           margin: "10px 0 0 0",
                         }}
                       >
@@ -1061,26 +1246,7 @@ export default function PendingFormNew() {
                       </Box>
                     </div>
 
-                    <div className="pt-8 flex justify-end">
-                      <button
-                        type="reset"
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        Reset
-                      </button>
-                      <button
-                        type="reset"
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4"
-                      >
-                        Propose new C/P SSi
-                      </button>
-                      <button
-                        type="submit"
-                        className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        Confirm SSI
-                      </button>
-                    </div>
+                    
                   </form>
                   <form className="space-y-8 divide-y divide-gray-300 lg:ml-7 md:ml-7">
                     <div className="mt-10 pt-10">
@@ -1121,6 +1287,19 @@ export default function PendingFormNew() {
                             >
                               SELL
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.SELL}
+                              setInputs={(newValues) =>
+                                setSellInputs({ ...sellInputs, SELL: newValues })
+                              }
+                              fieldId="SELL"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1131,22 +1310,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="SELL_label"
-                                name="SELL_label"
-                                value={inputs1.SELL[0]}
-                                onChange={handleInputChange("SELL", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("SELL", 1)}
+                                onChange={handleInputChange("SELL", 2, false)}
                                 type="text"
-                                name="SELL_input1"
-                                value={inputs1.SELL[1]}
+                                name="SELL_input2"
+                                value={sellInputs.SELL[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1164,12 +1333,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("SELL", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="SELL_input2"
-                                value={inputs1.SELL[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1200,6 +1379,19 @@ export default function PendingFormNew() {
                             >
                               DECU
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.DECU}
+                              setInputs={(newValues) =>
+                                setSellInputs({ ...sellInputs, DECU: newValues })
+                              }
+                              fieldId="DECU"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1210,22 +1402,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="DECU_label"
-                                name="DECU_label"
-                                value={inputs1.DECU[0]}
-                                onChange={handleInputChange("DECU", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("DECU", 1)}
+                                onChange={handleInputChange("DECU", 2, false)}
                                 type="text"
-                                name="DECU_input1"
-                                value={inputs1.DECU[1]}
+                                name="DECU_input2"
+                                value={sellInputs.DECU[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1243,12 +1425,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("DECU", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="DECU_input2"
-                                value={inputs1.DECU[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1279,6 +1471,19 @@ export default function PendingFormNew() {
                             >
                               DEI1
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.DEI1}
+                              setInputs={(newValues) =>
+                                setSellInputs({ ...sellInputs, DEI1: newValues })
+                              }
+                              fieldId="DEI1"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1289,22 +1494,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="DEI1_label"
-                                name="DEI1_label"
-                                value={inputs1.DEI1[0]}
-                                onChange={handleInputChange("DEI1", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("DEI1", 1)}
+                                onChange={handleInputChange("DEI1", 2, false)}
                                 type="text"
-                                name="DEI1_input1"
-                                value={inputs1.DEI1[1]}
+                                name="DEI1_input2"
+                                value={sellInputs.DEI1[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1322,12 +1517,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("DEI1", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="DEI1_input2"
-                                value={inputs1.DEI1[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1358,6 +1563,19 @@ export default function PendingFormNew() {
                             >
                               DEAG
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.DEAG}
+                              setInputs={(newValues) =>
+                                setSellInputs({ ...sellInputs, DEAG: newValues })
+                              }
+                              fieldId="DEAG"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1368,28 +1586,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="DEAG_label"
-                                name="DEAG_label"
-                                value={inputs1.DEAG[0]}
-                                onChange={handleInputChange("DEAG", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("DEAG", 1)}
+                                onChange={handleInputChange("DEAG", 4, false)}
                                 type="text"
-                                name="DEAG_input1"
-                                value={
-                                  inputs1.DEAG[1] +
-                                  " " +
-                                  inputs1.DEAG[2] +
-                                  " " +
-                                  inputs1.DEAG[3]
-                                }
+                                name="DEAG_input4"
+                                value={sellInputs.DEAG[4]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1407,12 +1609,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("DEAG", 4)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="DEAG_input4"
-                                value={inputs1.DEAG[4]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1443,6 +1655,19 @@ export default function PendingFormNew() {
                             >
                               PSET
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.PSET_2}
+                              setInputs={(newValues) =>
+                                setSellInputs({ ...sellInputs, PSET_2: newValues })
+                              }
+                              fieldId="PSET_2"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1453,22 +1678,12 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="PSET2_label"
-                                name="PSET2_label"
-                                value={inputs1.PSET_2[0]}
-                                onChange={handleInputChange("PSET_2", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("PSET_2", 1)}
+                                onChange={handleInputChange("PSET_2", 2, false)}
                                 type="text"
-                                name="PSET2_input1"
-                                value={inputs1.PSET_2[1]}
+                                name="PSET2_input2"
+                                value={sellInputs.PSET_2[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1486,12 +1701,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("PSET_2", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="PSET2_input2"
-                                value={inputs1.PSET_2[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1531,6 +1756,22 @@ export default function PendingFormNew() {
                             >
                               SELL Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.proposed_SELL}
+                              setInputs={(newValues) =>
+                                setSellInputs({
+                                  ...sellInputs,
+                                  proposed_SELL: newValues,
+                                })
+                              }
+                              fieldId="SELL"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1541,22 +1782,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="SELL_label"
-                                name="SELL_label"
-                                value={inputs1.SELL[0]}
-                                onChange={handleInputChange("SELL", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("SELL", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_SELL",
+                                  2,
+                                  false
+                                )}
                                 type="text"
-                                name="SELL_input1"
-                                value={inputs1.SELL[1]}
+                                name="SELL_input2"
+                                value={sellInputs.proposed_SELL[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1574,12 +1809,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("SELL", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="SELL_input2"
-                                value={inputs1.SELL[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1610,6 +1855,22 @@ export default function PendingFormNew() {
                             >
                               DECU Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.proposed_DECU}
+                              setInputs={(newValues) =>
+                                setSellInputs({
+                                  ...sellInputs,
+                                  proposed_DECU: newValues,
+                                })
+                              }
+                              fieldId="DECU"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1620,22 +1881,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="DECU_label"
-                                name="DECU_label"
-                                value={inputs1.DECU[0]}
-                                onChange={handleInputChange("DECU", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("DECU", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_DECU",
+                                  2,
+                                  false
+                                )}
                                 type="text"
-                                name="DECU_input1"
-                                value={inputs1.DECU[1]}
+                                name="DECU_input2"
+                                value={sellInputs.proposed_DECU[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1653,12 +1908,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("DECU", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="DECU_input2"
-                                value={inputs1.DECU[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1689,6 +1954,22 @@ export default function PendingFormNew() {
                             >
                               DEI1 Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.proposed_DEI1}
+                              setInputs={(newValues) =>
+                                setSellInputs({
+                                  ...sellInputs,
+                                  proposed_DEI1: newValues,
+                                })
+                              }
+                              fieldId="DEI1"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1699,22 +1980,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="DEI1_label"
-                                name="DEI1_label"
-                                value={inputs1.DEI1[0]}
-                                onChange={handleInputChange("DEI1", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("DEI1", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_DEI1",
+                                  2,
+                                  false
+                                )}
                                 type="text"
-                                name="DEI1_input1"
-                                value={inputs1.DEI1[1]}
+                                name="DEI1_input2"
+                                value={sellInputs.proposed_DEI1[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1732,12 +2007,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("DEI1", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="DEI1_input2"
-                                value={inputs1.DEI1[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1768,6 +2053,22 @@ export default function PendingFormNew() {
                             >
                               DEAG Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.proposed_DEAG}
+                              setInputs={(newValues) =>
+                                setSellInputs({
+                                  ...sellInputs,
+                                  proposed_DEAG: newValues,
+                                })
+                              }
+                              fieldId="DEAG"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1778,28 +2079,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="DEAG_label"
-                                name="DEAG_label"
-                                value={inputs1.DEAG[0]}
-                                onChange={handleInputChange("DEAG", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("DEAG", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_DEAG",
+                                  4,
+                                  false
+                                )}
                                 type="text"
-                                name="DEAG_input1"
-                                value={
-                                  inputs1.DEAG[1] +
-                                  " " +
-                                  inputs1.DEAG[2] +
-                                  " " +
-                                  inputs1.DEAG[3]
-                                }
+                                name="DEAG_input4"
+                                value={sellInputs.proposed_DEAG[4]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1817,12 +2106,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("DEAG", 4)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="DEAG_input4"
-                                value={inputs1.DEAG[4]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1853,6 +2152,22 @@ export default function PendingFormNew() {
                             >
                               PSET Proposed
                             </Typography>
+                            <DynamicInputField
+                              inputs={sellInputs.proposed_PSET_2}
+                              setInputs={(newValues) =>
+                                setSellInputs({
+                                  ...sellInputs,
+                                  proposed_PSET_2: newValues,
+                                })
+                              }
+                              fieldId="PSET_2"
+                              labelOptions={[
+                                { value: "P", label: "95P" },
+                                { value: "Q", label: "95Q" },
+                                { value: "R", label: "95R" },
+                                { value: "S", label: "95S" },
+                              ]}
+                            />
                             <Box
                               sx={{
                                 display: "grid",
@@ -1863,22 +2178,16 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <select
-                                id="PSET2_label"
-                                name="PSET2_label"
-                                value={inputs1.PSET_2[0]}
-                                onChange={handleInputChange("PSET_2", 0)}
-                              >
-                                <option value="P">95P</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
+                              <label>97A::SAFE</label>
                               <input
-                                onChange={handleInputChange("PSET_2", 1)}
+                                onChange={handleInputChange(
+                                  "proposed_PSET_2",
+                                  2,
+                                  false
+                                )}
                                 type="text"
-                                name="PSET2_input1"
-                                value={inputs1.PSET_2[1]}
+                                name="PSET2_input2"
+                                value={sellInputs.proposed_PSET_2[2]}
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1896,12 +2205,22 @@ export default function PendingFormNew() {
                                 },
                               }}
                             >
-                              <label>97A::SAFE</label>
+                              <select
+                                id="BUYR_label"
+                                name="BUYR_label"
+                                value=""
+                                onChange={handleInputChange("BUYR", 0)}
+                              >
+                                <option value="P">70E::DECL</option>
+                                <option value="Q">95Q</option>
+                                <option value="R">95R</option>
+                                <option value="S">95S</option>
+                              </select>
                               <input
-                                onChange={handleInputChange("PSET_2", 2)}
+                                onChange={handleInputChange("BUYR", 1)}
                                 type="text"
-                                name="PSET2_input2"
-                                value={inputs1.PSET_2[2]}
+                                name="BUYR_input1"
+                                value=""
                                 style={{
                                   padding: "5px",
                                   backgroundColor: "#fff",
@@ -1916,6 +2235,7 @@ export default function PendingFormNew() {
                         sx={{
                           padding: "5px",
                           display: "flex",
+                          justifyContent: "center",
                           alignItems: "center",
                           margin: "10px 0 0 0",
                         }}
@@ -1931,7 +2251,10 @@ export default function PendingFormNew() {
                       </Box>
                     </div>
 
-                    <div className="pt-8 flex justify-end">
+                    
+                  </form>
+                </div>
+                <div className="divide-y divide-gray-300 pt-8 flex justify-start">
                       <button
                         type="reset"
                         className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
@@ -1951,8 +2274,6 @@ export default function PendingFormNew() {
                         Confirm SSI
                       </button>
                     </div>
-                  </form>
-                </div>
               </div>
             </div>
           </main>
