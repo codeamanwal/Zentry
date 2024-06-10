@@ -97,14 +97,6 @@ function AccountDetails({ party, counterParty }) {
                 label="Fax"
                 InputProps={{ readOnly: true }}
               />
-              <TextField
-                variant="outlined"
-                size="small"
-                fullWidth
-                value={party?.contactParty?.address || "Loading..."}
-                label="Address"
-                InputProps={{ readOnly: true }}
-              />
             </Box>
           </Box>
         </Box>
@@ -201,14 +193,6 @@ function AccountDetails({ party, counterParty }) {
                 fullWidth
                 value={counterParty?.contactCounterParty?.faxNo || "Loading..."}
                 label="Fax"
-                InputProps={{ readOnly: true }}
-              />
-              <TextField
-                variant="outlined"
-                size="small"
-                fullWidth
-                value={counterParty?.contactCounterParty?.address || "Loading..."}
-                label="Address"
                 InputProps={{ readOnly: true }}
               />
             </Box>
