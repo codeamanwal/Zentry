@@ -127,9 +127,9 @@ export default function PendingFormNew() {
                     Pending SSI Confirmation: {data?.settlementInstructionId}
                   </h2>
                 </div>
-                <div className="px-4 py-5 bg-white sm:p-6 max-w-7xl">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex flex-row justify-center items-center">
+                <div className="px-4 py-5 bg-white sm:p-6max-w-7xl">
+                  <div className="grid grid-cols-6 md:grid-cols-5 gap-4">
+                    <div className="flex flex-row justify-center col-span-2 items-center">
                       <label
                         htmlFor="securitiesId"
                         className="block text-sm font-medium text-gray-900"
@@ -160,7 +160,7 @@ export default function PendingFormNew() {
                       />
                     </div>
 
-                    <div className="flex flex-row justify-center items-center">
+                    <div className="flex flex-row justify-center col-span-2 items-center">
                       <label
                         htmlFor="currency"
                         className="block text-sm font-medium text-gray-900"
@@ -177,7 +177,7 @@ export default function PendingFormNew() {
                       />
                     </div>
 
-                    <div className="flex flex-row justify-center items-center">
+                    <div className="flex flex-row justify-center col-span-2 items-center">
                       <label
                         htmlFor="securitiesName"
                         className="block text-sm font-medium text-gray-900"
@@ -194,7 +194,7 @@ export default function PendingFormNew() {
                       />
                     </div>
 
-                    <div className="flex flex-row justify-center items-center">
+                    <div className="flex flex-row justify-center col-span-2 items-center">
                       <label
                         htmlFor="quantity"
                         className="block text-sm font-medium text-gray-900"

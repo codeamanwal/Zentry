@@ -1,10 +1,12 @@
 import React from "react";
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, TextField } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 
 function AccountDetails({ party, counterParty }) {
+  console.log("party", party);
+  console.log("counter", counterParty);
   return (
-    <Box sx={{ display: "flex", justifyContent: "space-between"}}>
+    <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
       <Box
         sx={{
           flex: "1",
@@ -15,6 +17,7 @@ function AccountDetails({ party, counterParty }) {
           margin: "10px",
           position: "relative",
           minWidth: "300px", // Ensure minimum width for responsiveness
+          maxWidth: "45%", // Adjusted for better spacing on larger screens
         }}
       >
         <Typography
@@ -33,23 +36,79 @@ function AccountDetails({ party, counterParty }) {
           sx={{
             display: "grid",
             gap: "10px",
-            gridTemplateColumns: "150px 1fr", // Adjusted for better spacing
-            alignItems: "center",
+            gridTemplateColumns: "1fr 1fr",
+            alignItems: "start",
           }}
         >
-          <Typography variant="body2">Account No</Typography>
-          <Typography variant="body2">{party.accountNo}</Typography>
-          <Typography variant="body2">Account Owner</Typography>
-          <Typography variant="body2">{party.owner}</Typography>
-          <Typography variant="body2">Domain</Typography>
-          <Typography variant="body2">{party.domain}</Typography>
-          <Typography variant="body2">Contact</Typography>
-          <Typography variant="body2">{party.contactEmail}</Typography>
-          <Typography variant="body2">{party.contactPhone}</Typography>
+          <Box>
+            <Typography variant="body2">Account No</Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={party?.accountParty?.accountNo || "Loading..."}
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="body2">Domain</Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={party?.accountParty?.domain || "Loading..."}
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="body2">Account Owner</Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={party?.accountParty?.accountName || "Loading..."}
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="body2">Contact</Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px" }}>
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={party?.contactParty?.emailId || "Loading..."}
+                label="Email"
+                InputProps={{ readOnly: true }}
+              />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={party?.contactParty?.phoneNo || "Loading..."}
+                label="Phone"
+                InputProps={{ readOnly: true }}
+              />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={party?.contactParty?.faxNo || "Loading..."}
+                label="Fax"
+                InputProps={{ readOnly: true }}
+              />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={party?.contactParty?.address || "Loading..."}
+                label="Address"
+                InputProps={{ readOnly: true }}
+              />
+            </Box>
+          </Box>
         </Box>
-        <IconButton
-          sx={{ position: "absolute", top: "10px", right: "10px" }}
-        >
+        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }}>
           <EditIcon />
         </IconButton>
       </Box>
@@ -64,6 +123,7 @@ function AccountDetails({ party, counterParty }) {
           margin: "10px",
           position: "relative",
           minWidth: "300px", // Ensure minimum width for responsiveness
+          maxWidth: "45%", // Adjusted for better spacing on larger screens
         }}
       >
         <Typography
@@ -82,23 +142,79 @@ function AccountDetails({ party, counterParty }) {
           sx={{
             display: "grid",
             gap: "10px",
-            gridTemplateColumns: "150px 1fr",
-            alignItems: "center",
+            gridTemplateColumns: "1fr 1fr",
+            alignItems: "start",
           }}
         >
-          <Typography variant="body2">Account No</Typography>
-          <Typography variant="body2">{counterParty.accountNo}</Typography>
-          <Typography variant="body2">Account Owner</Typography>
-          <Typography variant="body2">{counterParty.owner}</Typography>
-          <Typography variant="body2">Domain</Typography>
-          <Typography variant="body2">{counterParty.domain}</Typography>
-          <Typography variant="body2">Contact</Typography>
-          <Typography variant="body2">{counterParty.contactEmail}</Typography>
-          <Typography variant="body2">{counterParty.contactPhone}</Typography>
+          <Box>
+            <Typography variant="body2">Account No</Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={counterParty?.accountCounterParty?.accountNo || "Loading..."}
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="body2">Domain</Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={counterParty?.accountCounterParty?.domain || "Loading..."}
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="body2">Account Owner</Typography>
+            <TextField
+              variant="outlined"
+              size="small"
+              fullWidth
+              value={counterParty?.accountCounterParty?.accountName || "Loading..."}
+              InputProps={{ readOnly: true }}
+            />
+          </Box>
+          <Box>
+            <Typography variant="body2">Contact</Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px" }}>
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={counterParty?.contactCounterParty?.emailId || "Loading..."}
+                label="Email"
+                InputProps={{ readOnly: true }}
+              />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={counterParty?.contactCounterParty?.phoneNo || "Loading..."}
+                label="Phone"
+                InputProps={{ readOnly: true }}
+              />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={counterParty?.contactCounterParty?.faxNo || "Loading..."}
+                label="Fax"
+                InputProps={{ readOnly: true }}
+              />
+              <TextField
+                variant="outlined"
+                size="small"
+                fullWidth
+                value={counterParty?.contactCounterParty?.address || "Loading..."}
+                label="Address"
+                InputProps={{ readOnly: true }}
+              />
+            </Box>
+          </Box>
         </Box>
-        <IconButton
-          sx={{ position: "absolute", top: "10px", right: "10px" }}
-        >
+        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }}>
           <EditIcon />
         </IconButton>
       </Box>
