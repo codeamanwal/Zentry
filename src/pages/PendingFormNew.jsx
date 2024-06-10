@@ -11,7 +11,7 @@ export default function PendingFormNew() {
   const [data, setData] = useState({});
 
   const [buyInputs, setBuyInputs] = useState({
-    BUYR: ["QP", "", ""],
+    BUYR: ["Q", "", ""],
     RECU: ["P", "", ""],
     REI1: ["P", "", ""],
     REAG: ["P", "", "", "", ""],
