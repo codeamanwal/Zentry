@@ -72,7 +72,7 @@ function AccountDetails({ party, counterParty }) {
           </Box>
           <Box>
             <Typography variant="body2">Contact</Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", paddingTop: "8px" }}>
               <TextField
                 variant="outlined"
                 size="small"
@@ -170,7 +170,7 @@ function AccountDetails({ party, counterParty }) {
           </Box>
           <Box>
             <Typography variant="body2">Contact</Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", padding: "8px" }}>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", paddingTop: "8px" }}>
               <TextField
                 variant="outlined"
                 size="small"

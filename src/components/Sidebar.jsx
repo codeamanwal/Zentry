@@ -51,7 +51,7 @@ export default function Sidebar() {
                   <div className="flex items-center justify-between">
                     <img
                       className="h-8 w-auto"
-                      src="../assets/images/zentry_logo.webp"
+                      src="/Users/kushanksingh/Downloads/Zentry/src/assets/images/image_logo.png"
                       alt="Zentry"
                     />
                     <button
@@ -102,7 +102,7 @@ export default function Sidebar() {
           <div className="flex items-center flex-shrink-0">
             <img
               className="h-8 w-auto"
-              src="../assets/images/zentry_logo.webp"
+              src="/Users/kushanksingh/Downloads/Zentry/src/assets/images/image_logo.png"
               alt="Zentry"
             />
           </div>
@@ -116,7 +116,7 @@ export default function Sidebar() {
                     classNames(
                       isActive
                         ? "bg-gray-800 text-white"
-                        : "text-gray-400 hover:text-white hover:bg-gray-800",
+                        : "text-white hover:text-white hover:bg-gray-800",
                       "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
                     )
                   }

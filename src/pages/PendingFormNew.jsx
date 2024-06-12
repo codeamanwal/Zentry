@@ -5,10 +5,40 @@ import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
 import AccountDetails from "../components/pending/AccountDetails";
 import DynamicInputField from "../components/pending/Box";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import CommentsBox from "../components/pending/CommentBox";
 
 export default function PendingFormNew() {
   const { settlementId } = useParams();
   const [data, setData] = useState({});
+  const partyCommentsData = [
+    {
+      date: "02.06.2024 08:00:01",
+      user: "user@credit-suisse.com",
+      text: "jhhfjhm jhfjdhf hgsjhi jhjdc",
+    },
+    {
+      date: "01.06.2024 15:10:01",
+      user: "user_2@credit-suisse.com",
+      text: ",mkjjlmkjvij jhkdj jjhkvjkv",
+    },
+  ];
+
+  const counterPartyCommentsData = [
+    {
+      date: "02.06.2024 09:00:01",
+      user: "user@ubs.com",
+      text: "öcöpcopölö lllklk o öp",
+    },
+    {
+      date: "01.06.2024 14:10:01",
+      user: "user_1@ubs.com",
+      text: "llkjoijoklkjc ijockl jc jjokclc",
+    },
+  ];
+
+  const currentUser = "current_user@credit-suisse.com"; // Statically set for now
+  const isPartySide = true;
 
   const [buyInputs, setBuyInputs] = useState({
     BUYR: ["Q", "", ""],
@@ -123,7 +153,11 @@ export default function PendingFormNew() {
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg leading-6 font-medium text-gray-900">
+                  <h2 className="text-lg leading-6 font-medium text-gray-900 flex flex-col">
+                    <ExclamationCircleIcon
+                      className="mr-3 h-6 w-6"
+                      aria-hidden="true"
+                    />{" "}
                     Pending SSI Confirmation: {data?.settlementInstructionId}
                   </h2>
                 </div>
@@ -243,2037 +277,2085 @@ export default function PendingFormNew() {
                     </div>
                   </div>
                 </div>
-
-                <div className="flex justify-between flex-">
-                  <form className="space-y-8 divide-y divide-gray-300">
-                    <div className="mt-10 pt-10">
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "30px",
-                          flexDirection: { sm: "row", xs: "column" },
-                        }}
-                      >
+                <div>
+                  <div className="flex justify-between flex-">
+                    <form className="space-y-8 divide-y divide-gray-300">
+                      <div className="mt-10 pt-10">
                         <Box
                           sx={{
-                            flex: "1",
-                            minWidth: "0",
+                            display: "flex",
+                            gap: "30px",
+                            flexDirection: { sm: "row", xs: "column" },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              flex: "1",
+                              minWidth: "0",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              gap: "14px",
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                position: "relative",
+                                justifyContent: "center",
+                                alignItems: "center",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                BUYR Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.proposed_BUYR}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    proposed_BUYR: newValues,
+                                  })
+                                }
+                                fieldId="BUYR"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_BUYR",
+                                    2,
+                                    true
+                                  )}
+                                  type="text"
+                                  name="BUYR_input2"
+                                  value={buyInputs.proposed_BUYR[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                RECU Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.proposed_RECU}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    proposed_RECU: newValues,
+                                  })
+                                }
+                                fieldId="RECU"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_RECU",
+                                    2,
+                                    true
+                                  )}
+                                  type="text"
+                                  name="RECU_input2"
+                                  value={buyInputs.proposed_RECU[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                REI1 Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.proposed_REI1}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    proposed_REI1: newValues,
+                                  })
+                                }
+                                fieldId="REI1"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_REI1",
+                                    2,
+                                    true
+                                  )}
+                                  type="text"
+                                  name="REI1_input2"
+                                  value={buyInputs.proposed_REI1[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                REAG Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.proposed_REAG}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    proposed_REAG: newValues,
+                                  })
+                                }
+                                fieldId="REAG"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_REAG",
+                                    4,
+                                    true
+                                  )}
+                                  type="text"
+                                  name="REAG_input4"
+                                  value={buyInputs.proposed_REAG[4]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                PSET Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.proposed_PSET_1}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    proposed_PSET_1: newValues,
+                                  })
+                                }
+                                fieldId="PSET_1"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_PSET_1",
+                                    2,
+                                    true
+                                  )}
+                                  type="text"
+                                  name="PSET1_input2"
+                                  value={buyInputs.proposed_PSET_1[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              flex: "1",
+                              minWidth: "0",
+                              display: "flex",
+                              gap: "14px",
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid #84cc16",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                BUYR
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.BUYR}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    BUYR: newValues,
+                                  })
+                                }
+                                fieldId="BUYR"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("BUYR", 2, true)}
+                                  type="text"
+                                  name="BUYR_input2"
+                                  value={buyInputs.BUYR[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid #84cc16",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                RECU
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.RECU}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    RECU: newValues,
+                                  })
+                                }
+                                fieldId="RECU"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("RECU", 2, true)}
+                                  type="text"
+                                  name="RECU_input2"
+                                  value={buyInputs.RECU[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid #84cc16",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                REI1
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.REI1}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    REI1: newValues,
+                                  })
+                                }
+                                fieldId="REI1"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("REI1", 2, true)}
+                                  type="text"
+                                  name="REI1_input2"
+                                  value={buyInputs.REI1[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid #84cc16",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                REAG
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.REAG}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    REAG: newValues,
+                                  })
+                                }
+                                fieldId="REAG"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("REAG", 4, true)}
+                                  type="text"
+                                  name="REAG_input4"
+                                  value={buyInputs.REAG[4]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid #84cc16",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                PSET
+                              </Typography>
+                              <DynamicInputField
+                                inputs={buyInputs.PSET_1}
+                                setInputs={(newValues) =>
+                                  setBuyInputs({
+                                    ...buyInputs,
+                                    PSET_1: newValues,
+                                  })
+                                }
+                                fieldId="PSET_1"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "PSET_1",
+                                    2,
+                                    true
+                                  )}
+                                  type="text"
+                                  name="PSET1_input2"
+                                  value={buyInputs.PSET_1[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Box>
+                        <CommentsBox
+                          title="Comments / remarks - Party side"
+                          commentsData={partyCommentsData}
+                          user={currentUser}
+                          isActive={isPartySide}
+                        />
+                        <Box
+                          sx={{
+                            padding: "5px",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            margin: "10px 0 0 0",
+                          }}
+                        >
+                          <label>Confirm SSI</label>
+                          <input
+                            onChange={handleInputChange}
+                            type="checkbox"
+                            name="confirm"
+                            value=""
+                            style={{ marginLeft: "5px" }}
+                          />
+                        </Box>
+                      </div>
+                    </form>
+                    <form className="space-y-8 divide-y divide-gray-300 lg:ml-7 md:ml-7">
+                      <div className="mt-10 pt-10">
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: "30px",
+                            flexDirection: { sm: "row", xs: "column" },
+                          }}
+                        >
+                          <Box
+                            sx={{
+                              flex: "1",
+                              minWidth: "0",
+                              display: "flex",
+                              gap: "10px",
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid red",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                SELL
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.SELL}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    SELL: newValues,
+                                  })
+                                }
+                                fieldId="SELL"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("SELL", 2, false)}
+                                  type="text"
+                                  name="SELL_input2"
+                                  value={sellInputs.SELL[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid red",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                DECU
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.DECU}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    DECU: newValues,
+                                  })
+                                }
+                                fieldId="DECU"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("DECU", 2, false)}
+                                  type="text"
+                                  name="DECU_input2"
+                                  value={sellInputs.DECU[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid red",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                DEI1
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.DEI1}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    DEI1: newValues,
+                                  })
+                                }
+                                fieldId="DEI1"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("DEI1", 2, false)}
+                                  type="text"
+                                  name="DEI1_input2"
+                                  value={sellInputs.DEI1[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid red",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                DEAG
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.DEAG}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    DEAG: newValues,
+                                  })
+                                }
+                                fieldId="DEAG"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange("DEAG", 4, false)}
+                                  type="text"
+                                  name="DEAG_input4"
+                                  value={sellInputs.DEAG[4]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid red",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                PSET
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.PSET_2}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    PSET_2: newValues,
+                                  })
+                                }
+                                fieldId="PSET_2"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "PSET_2",
+                                    2,
+                                    false
+                                  )}
+                                  type="text"
+                                  name="PSET2_input2"
+                                  value={sellInputs.PSET_2[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                          </Box>
+                          <Box
+                            sx={{
+                              flex: "1",
+                              minWidth: "0",
+                              display: "flex",
+                              gap: "10px",
+                              flexDirection: "column",
+                            }}
+                          >
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                SELL Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.proposed_SELL}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    proposed_SELL: newValues,
+                                  })
+                                }
+                                fieldId="SELL"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_SELL",
+                                    2,
+                                    false
+                                  )}
+                                  type="text"
+                                  name="SELL_input2"
+                                  value={sellInputs.proposed_SELL[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                DECU Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.proposed_DECU}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    proposed_DECU: newValues,
+                                  })
+                                }
+                                fieldId="DECU"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_DECU",
+                                    2,
+                                    false
+                                  )}
+                                  type="text"
+                                  name="DECU_input2"
+                                  value={sellInputs.proposed_DECU[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                DEI1 Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.proposed_DEI1}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    proposed_DEI1: newValues,
+                                  })
+                                }
+                                fieldId="DEI1"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_DEI1",
+                                    2,
+                                    false
+                                  )}
+                                  type="text"
+                                  name="DEI1_input2"
+                                  value={sellInputs.proposed_DEI1[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                DEAG Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.proposed_DEAG}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    proposed_DEAG: newValues,
+                                  })
+                                }
+                                fieldId="DEAG"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_DEAG",
+                                    4,
+                                    false
+                                  )}
+                                  type="text"
+                                  name="DEAG_input4"
+                                  value={sellInputs.proposed_DEAG[4]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                            <Box
+                              sx={{
+                                display: "flex",
+                                gap: "10px",
+                                flexDirection: "column",
+                                border: "2px solid lightgrey",
+                                padding: "15px",
+                                margin: "4px 0 0 0",
+                                position: "relative",
+                              }}
+                            >
+                              <Typography
+                                sx={{
+                                  position: "absolute",
+                                  backgroundColor: "#fff",
+                                  fontSize: "11px",
+                                  top: "-9px",
+                                  padding: "0 5px",
+                                }}
+                              >
+                                PSET Proposed
+                              </Typography>
+                              <DynamicInputField
+                                inputs={sellInputs.proposed_PSET_2}
+                                setInputs={(newValues) =>
+                                  setSellInputs({
+                                    ...sellInputs,
+                                    proposed_PSET_2: newValues,
+                                  })
+                                }
+                                fieldId="PSET_2"
+                                labelOptions={[
+                                  { value: "P", label: "95P" },
+                                  { value: "Q", label: "95Q" },
+                                  { value: "R", label: "95R" },
+                                  { value: "S", label: "95S" },
+                                ]}
+                              />
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <label>97A::SAFE</label>
+                                <input
+                                  onChange={handleInputChange(
+                                    "proposed_PSET_2",
+                                    2,
+                                    false
+                                  )}
+                                  type="text"
+                                  name="PSET2_input2"
+                                  value={sellInputs.proposed_PSET_2[2]}
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                              <Box
+                                sx={{
+                                  display: "grid",
+                                  gap: "5px",
+                                  gridTemplateColumns: {
+                                    md: "100px 200px",
+                                    sm: "80px 160px",
+                                  },
+                                }}
+                              >
+                                <select
+                                  id="BUYR_label"
+                                  name="BUYR_label"
+                                  value=""
+                                  onChange={handleInputChange("BUYR", 0)}
+                                >
+                                  <option value="P">70E::DECL</option>
+                                  <option value="Q">95Q</option>
+                                  <option value="R">95R</option>
+                                  <option value="S">95S</option>
+                                </select>
+                                <input
+                                  onChange={handleInputChange("BUYR", 1)}
+                                  type="text"
+                                  name="BUYR_input1"
+                                  value=""
+                                  style={{
+                                    padding: "5px",
+                                    backgroundColor: "#fff",
+                                    border: "2px solid black",
+                                  }}
+                                />
+                              </Box>
+                            </Box>
+                          </Box>
+                        </Box>
+
+                        <CommentsBox
+                          title="Comments / remarks - Counter Party side"
+                          commentsData={counterPartyCommentsData}
+                          user={currentUser}
+                          isActive={!isPartySide}
+                        />
+                        <Box
+                          sx={{
+                            padding: "5px",
                             display: "flex",
                             justifyContent: "center",
                             alignItems: "center",
-                            gap: "14px",
-                            flexDirection: "column",
+                            margin: "10px 0 0 0",
                           }}
                         >
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              position: "relative",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              BUYR Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.proposed_BUYR}
-                              setInputs={(newValues) =>
-                                setBuyInputs({
-                                  ...buyInputs,
-                                  proposed_BUYR: newValues,
-                                })
-                              }
-                              fieldId="BUYR"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_BUYR",
-                                  2,
-                                  true
-                                )}
-                                type="text"
-                                name="BUYR_input2"
-                                value={buyInputs.proposed_BUYR[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              RECU Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.proposed_RECU}
-                              setInputs={(newValues) =>
-                                setBuyInputs({
-                                  ...buyInputs,
-                                  proposed_RECU: newValues,
-                                })
-                              }
-                              fieldId="RECU"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_RECU",
-                                  2,
-                                  true
-                                )}
-                                type="text"
-                                name="RECU_input2"
-                                value={buyInputs.proposed_RECU[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              REI1 Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.proposed_REI1}
-                              setInputs={(newValues) =>
-                                setBuyInputs({
-                                  ...buyInputs,
-                                  proposed_REI1: newValues,
-                                })
-                              }
-                              fieldId="REI1"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_REI1",
-                                  2,
-                                  true
-                                )}
-                                type="text"
-                                name="REI1_input2"
-                                value={buyInputs.proposed_REI1[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              REAG Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.proposed_REAG}
-                              setInputs={(newValues) =>
-                                setBuyInputs({
-                                  ...buyInputs,
-                                  proposed_REAG: newValues,
-                                })
-                              }
-                              fieldId="REAG"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_REAG",
-                                  4,
-                                  true
-                                )}
-                                type="text"
-                                name="REAG_input4"
-                                value={buyInputs.proposed_REAG[4]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              PSET Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.proposed_PSET_1}
-                              setInputs={(newValues) =>
-                                setBuyInputs({
-                                  ...buyInputs,
-                                  proposed_PSET_1: newValues,
-                                })
-                              }
-                              fieldId="PSET_1"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_PSET_1",
-                                  2,
-                                  true
-                                )}
-                                type="text"
-                                name="PSET1_input2"
-                                value={buyInputs.proposed_PSET_1[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
+                          <label>Confirm SSI</label>
+                          <input
+                            onChange={handleInputChange}
+                            type="checkbox"
+                            name="confirm"
+                            value=""
+                            style={{ marginLeft: "5px" }}
+                          />
                         </Box>
-
-                        <Box
-                          sx={{
-                            flex: "1",
-                            minWidth: "0",
-                            display: "flex",
-                            gap: "14px",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid #84cc16",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              BUYR
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.BUYR}
-                              setInputs={(newValues) =>
-                                setBuyInputs({ ...buyInputs, BUYR: newValues })
-                              }
-                              fieldId="BUYR"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("BUYR", 2, true)}
-                                type="text"
-                                name="BUYR_input2"
-                                value={buyInputs.BUYR[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid #84cc16",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              RECU
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.RECU}
-                              setInputs={(newValues) =>
-                                setBuyInputs({ ...buyInputs, RECU: newValues })
-                              }
-                              fieldId="RECU"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("RECU", 2, true)}
-                                type="text"
-                                name="RECU_input2"
-                                value={buyInputs.RECU[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid #84cc16",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              REI1
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.REI1}
-                              setInputs={(newValues) =>
-                                setBuyInputs({ ...buyInputs, REI1: newValues })
-                              }
-                              fieldId="REI1"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("REI1", 2, true)}
-                                type="text"
-                                name="REI1_input2"
-                                value={buyInputs.REI1[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid #84cc16",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              REAG
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.REAG}
-                              setInputs={(newValues) =>
-                                setBuyInputs({ ...buyInputs, REAG: newValues })
-                              }
-                              fieldId="REAG"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("REAG", 4, true)}
-                                type="text"
-                                name="REAG_input4"
-                                value={buyInputs.REAG[4]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid #84cc16",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              PSET
-                            </Typography>
-                            <DynamicInputField
-                              inputs={buyInputs.PSET_1}
-                              setInputs={(newValues) =>
-                                setBuyInputs({ ...buyInputs, PSET_1: newValues })
-                              }
-                              fieldId="PSET_1"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("PSET_1", 2, true)}
-                                type="text"
-                                name="PSET1_input2"
-                                value={buyInputs.PSET_1[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          padding: "5px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          margin: "10px 0 0 0",
-                        }}
-                      >
-                        <label>Confirm SSI</label>
-                        <input
-                          onChange={handleInputChange}
-                          type="checkbox"
-                          name="confirm"
-                          value=""
-                          style={{ marginLeft: "5px" }}
-                        />
-                      </Box>
-                    </div>
-
-                    
-                  </form>
-                  <form className="space-y-8 divide-y divide-gray-300 lg:ml-7 md:ml-7">
-                    <div className="mt-10 pt-10">
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "30px",
-                          flexDirection: { sm: "row", xs: "column" },
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            flex: "1",
-                            minWidth: "0",
-                            display: "flex",
-                            gap: "10px",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid red",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              SELL
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.SELL}
-                              setInputs={(newValues) =>
-                                setSellInputs({ ...sellInputs, SELL: newValues })
-                              }
-                              fieldId="SELL"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("SELL", 2, false)}
-                                type="text"
-                                name="SELL_input2"
-                                value={sellInputs.SELL[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid red",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              DECU
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.DECU}
-                              setInputs={(newValues) =>
-                                setSellInputs({ ...sellInputs, DECU: newValues })
-                              }
-                              fieldId="DECU"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("DECU", 2, false)}
-                                type="text"
-                                name="DECU_input2"
-                                value={sellInputs.DECU[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid red",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              DEI1
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.DEI1}
-                              setInputs={(newValues) =>
-                                setSellInputs({ ...sellInputs, DEI1: newValues })
-                              }
-                              fieldId="DEI1"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("DEI1", 2, false)}
-                                type="text"
-                                name="DEI1_input2"
-                                value={sellInputs.DEI1[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid red",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              DEAG
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.DEAG}
-                              setInputs={(newValues) =>
-                                setSellInputs({ ...sellInputs, DEAG: newValues })
-                              }
-                              fieldId="DEAG"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("DEAG", 4, false)}
-                                type="text"
-                                name="DEAG_input4"
-                                value={sellInputs.DEAG[4]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid red",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              PSET
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.PSET_2}
-                              setInputs={(newValues) =>
-                                setSellInputs({ ...sellInputs, PSET_2: newValues })
-                              }
-                              fieldId="PSET_2"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange("PSET_2", 2, false)}
-                                type="text"
-                                name="PSET2_input2"
-                                value={sellInputs.PSET_2[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                        </Box>
-                        <Box
-                          sx={{
-                            flex: "1",
-                            minWidth: "0",
-                            display: "flex",
-                            gap: "10px",
-                            flexDirection: "column",
-                          }}
-                        >
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              SELL Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.proposed_SELL}
-                              setInputs={(newValues) =>
-                                setSellInputs({
-                                  ...sellInputs,
-                                  proposed_SELL: newValues,
-                                })
-                              }
-                              fieldId="SELL"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_SELL",
-                                  2,
-                                  false
-                                )}
-                                type="text"
-                                name="SELL_input2"
-                                value={sellInputs.proposed_SELL[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              DECU Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.proposed_DECU}
-                              setInputs={(newValues) =>
-                                setSellInputs({
-                                  ...sellInputs,
-                                  proposed_DECU: newValues,
-                                })
-                              }
-                              fieldId="DECU"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_DECU",
-                                  2,
-                                  false
-                                )}
-                                type="text"
-                                name="DECU_input2"
-                                value={sellInputs.proposed_DECU[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              DEI1 Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.proposed_DEI1}
-                              setInputs={(newValues) =>
-                                setSellInputs({
-                                  ...sellInputs,
-                                  proposed_DEI1: newValues,
-                                })
-                              }
-                              fieldId="DEI1"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_DEI1",
-                                  2,
-                                  false
-                                )}
-                                type="text"
-                                name="DEI1_input2"
-                                value={sellInputs.proposed_DEI1[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              DEAG Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.proposed_DEAG}
-                              setInputs={(newValues) =>
-                                setSellInputs({
-                                  ...sellInputs,
-                                  proposed_DEAG: newValues,
-                                })
-                              }
-                              fieldId="DEAG"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_DEAG",
-                                  4,
-                                  false
-                                )}
-                                type="text"
-                                name="DEAG_input4"
-                                value={sellInputs.proposed_DEAG[4]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: "10px",
-                              flexDirection: "column",
-                              border: "2px solid lightgrey",
-                              padding: "15px",
-                              margin: "4px 0 0 0",
-                              position: "relative",
-                            }}
-                          >
-                            <Typography
-                              sx={{
-                                position: "absolute",
-                                backgroundColor: "#fff",
-                                fontSize: "11px",
-                                top: "-9px",
-                                padding: "0 5px",
-                              }}
-                            >
-                              PSET Proposed
-                            </Typography>
-                            <DynamicInputField
-                              inputs={sellInputs.proposed_PSET_2}
-                              setInputs={(newValues) =>
-                                setSellInputs({
-                                  ...sellInputs,
-                                  proposed_PSET_2: newValues,
-                                })
-                              }
-                              fieldId="PSET_2"
-                              labelOptions={[
-                                { value: "P", label: "95P" },
-                                { value: "Q", label: "95Q" },
-                                { value: "R", label: "95R" },
-                                { value: "S", label: "95S" },
-                              ]}
-                            />
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <label>97A::SAFE</label>
-                              <input
-                                onChange={handleInputChange(
-                                  "proposed_PSET_2",
-                                  2,
-                                  false
-                                )}
-                                type="text"
-                                name="PSET2_input2"
-                                value={sellInputs.proposed_PSET_2[2]}
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                            <Box
-                              sx={{
-                                display: "grid",
-                                gap: "5px",
-                                gridTemplateColumns: {
-                                  md: "100px 200px",
-                                  sm: "80px 160px",
-                                },
-                              }}
-                            >
-                              <select
-                                id="BUYR_label"
-                                name="BUYR_label"
-                                value=""
-                                onChange={handleInputChange("BUYR", 0)}
-                              >
-                                <option value="P">70E::DECL</option>
-                                <option value="Q">95Q</option>
-                                <option value="R">95R</option>
-                                <option value="S">95S</option>
-                              </select>
-                              <input
-                                onChange={handleInputChange("BUYR", 1)}
-                                type="text"
-                                name="BUYR_input1"
-                                value=""
-                                style={{
-                                  padding: "5px",
-                                  backgroundColor: "#fff",
-                                  border: "2px solid black",
-                                }}
-                              />
-                            </Box>
-                          </Box>
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          padding: "5px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          margin: "10px 0 0 0",
-                        }}
-                      >
-                        <label>Confirm SSI</label>
-                        <input
-                          onChange={handleInputChange}
-                          type="checkbox"
-                          name="confirm"
-                          value=""
-                          style={{ marginLeft: "5px" }}
-                        />
-                      </Box>
-                    </div>
-
-                    
-                  </form>
+                      </div>
+                    </form>
+                  </div>
                 </div>
                 <div className="divide-y divide-gray-300 pt-8 flex justify-start">
-                      <button
-                        type="reset"
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        Reset
-                      </button>
-                      <button
-                        type="reset"
-                        className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4"
-                      >
-                        Propose new C/P SSi
-                      </button>
-                      <button
-                        type="submit"
-                        className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      >
-                        Confirm SSI
-                      </button>
-                    </div>
+                  <button
+                    type="reset"
+                    className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    type="reset"
+                    className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4"
+                  >
+                    Propose new C/P SSi
+                  </button>
+                  <button
+                    type="submit"
+                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-zentrybg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Confirm SSI
+                  </button>
+                </div>
               </div>
             </div>
           </main>
