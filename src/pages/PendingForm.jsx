@@ -91,7 +91,7 @@ export default function PendingForm() {
     <>
       <div>
         <Sidebar />
-        <div className="lg:pl-72">
+        <div className="lg:pl-64">
           <SearchBar />
           <main className="py-10">
             <div
