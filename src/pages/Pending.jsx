@@ -7,6 +7,10 @@ import { useEffect, useState } from "react";
 import ViewPendingForm from "../components/ViewPendingForm";
 import Tabs from "../components/pending/Tabs";
 import { Audio } from "react-loader-spinner";
+import {
+  EyeIcon,
+  PencilSquareIcon
+} from "@heroicons/react/24/outline";
 
 export default function PendingNew() {
   const navigate = useNavigate();
@@ -207,22 +211,28 @@ export default function PendingNew() {
                                       )
                                     )}
                                   </td>
-                                  <td className="px-3 py-4 text-sm text-center flex flex-col">
+                                  <td className="py-4 text-sm text-center flex flex-row">
                                     <Button
-                                      className="rounded-md bg-brown-600 px-3 py-1 text-sm font-semibold text-white hover:bg-brown-500"
+                                      className="rounded-md bg-brown-600 py-1 text-xs font-semibold text-white hover:bg-brown-500"
                                       onClick={() =>
                                         handleView(item.settlementInstructionId)
                                       }
                                     >
-                                      View
+                                    <EyeIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />
                                     </Button>
                                     <Button
-                                      className="rounded-md bg-brown-600 px-3 py-1 text-sm font-semibold text-white hover:bg-brown-500"
+                                      className="rounded-md bg-brown-600 py-1 text-xs font-semibold text-white hover:bg-brown-500"
                                       onClick={() =>
                                         handleEdit(item.settlementInstructionId)
                                       }
                                     >
-                                      Edit
+                                    <PencilSquareIcon
+                                    className="h-6 w-6"
+                                    aria-hidden="true"
+                                  />  
                                     </Button>
                                   </td>
                                 </tr>

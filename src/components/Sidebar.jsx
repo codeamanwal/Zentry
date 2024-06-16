@@ -50,8 +50,8 @@ export default function Sidebar() {
                 <div className="flex flex-col h-full overflow-y-auto bg-zentrybg p-6">
                   <div className="flex items-center justify-between">
                     <img
-                      className="h-8 w-auto"
-                      src="/Users/kushanksingh/Downloads/Zentry/src/assets/images/image_logo.png"
+                      className="h-12 w-auto"
+                      src="/assets/images/image_logo.png"
                       alt="Zentry"
                     />
                     <button
@@ -101,8 +101,8 @@ export default function Sidebar() {
         <div className="flex flex-col flex-grow bg-zentrybg p-6">
           <div className="flex items-center flex-shrink-0">
             <img
-              className="h-8 w-auto"
-              src="/Users/kushanksingh/Downloads/Zentry/src/assets/images/image_logo.png"
+              className="h-12 w-auto"
+              src="/assets/images/image_logo.png"
               alt="Zentry"
             />
           </div>

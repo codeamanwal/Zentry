@@ -1,10 +1,80 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Box, Typography, IconButton, TextField } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import EditAccountModal from "./EditAccountModal";
 
 function AccountDetails({ party, counterParty }) {
-  console.log("party", party);
-  console.log("counter", counterParty);
+  const [open, setOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState({
+    data: '',
+    type: ''
+  });
+
+  const [partyInputs, setPartyInputs] = useState({
+    accountName: '',
+    accountNumber: '',
+    domain: '',
+    emailId: '',
+    phoneNo: '',
+    faxNo: ''
+  });
+
+  const [counterInputs, setCounterInputs] = useState({
+    accountName: '',
+    accountNumber: '',
+    domain: '',
+    emailId: '',
+    phoneNo: '',
+    faxNo: ''
+  });
+
+  useEffect(() => {
+    if (party) {
+      setPartyInputs({
+        accountName: party.accountParty?.accountName || '',
+        accountNumber: party.accountParty?.accountNo || '',
+        domain: party.accountParty?.domain || '',
+        emailId: party.contactParty?.emailId || '',
+        phoneNo: party.contactParty?.phoneNo || '',
+        faxNo: party.contactParty?.faxNo || ''
+      });
+    }
+  }, [party]);
+
+  useEffect(() => {
+    if (counterParty) {
+      setCounterInputs({
+        accountName: counterParty.accountCounterParty?.accountName || '',
+        accountNumber: counterParty.accountCounterParty?.accountNo || '',
+        domain: counterParty.accountCounterParty?.domain || '',
+        emailId: counterParty.contactCounterParty?.emailId || '',
+        phoneNo: counterParty.contactCounterParty?.phoneNo || '',
+        faxNo: counterParty.contactCounterParty?.faxNo || ''
+      });
+    }
+  }, [counterParty]);
+
+  const handleClickOpen = (account, type) => {
+    setSelectedAccount({
+      data: account,
+      type: type
+    });
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedAccount({ data: '', type: '' });
+  };
+
+  const handleSave = (updatedInputs, type) => {
+    if (type === "party") {
+      setPartyInputs(updatedInputs);
+    } else if (type === "counterParty") {
+      setCounterInputs(updatedInputs);
+    }
+  };
+
   return (
     <Box sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap" }}>
       <Box
@@ -16,8 +86,8 @@ function AccountDetails({ party, counterParty }) {
           padding: "15px",
           margin: "10px",
           position: "relative",
-          minWidth: "300px", // Ensure minimum width for responsiveness
-          maxWidth: "45%", // Adjusted for better spacing on larger screens
+          minWidth: "300px",
+          maxWidth: "50%",
         }}
       >
         <Typography
@@ -46,7 +116,7 @@ function AccountDetails({ party, counterParty }) {
               variant="outlined"
               size="small"
               fullWidth
-              value={party?.accountParty?.accountNo || "Loading..."}
+              value={partyInputs.accountNumber}
               InputProps={{ readOnly: true }}
             />
           </Box>
@@ -56,7 +126,7 @@ function AccountDetails({ party, counterParty }) {
               variant="outlined"
               size="small"
               fullWidth
-              value={party?.accountParty?.domain || "Loading..."}
+              value={partyInputs.domain}
               InputProps={{ readOnly: true }}
             />
           </Box>
@@ -66,7 +136,7 @@ function AccountDetails({ party, counterParty }) {
               variant="outlined"
               size="small"
               fullWidth
-              value={party?.accountParty?.accountName || "Loading..."}
+              value={partyInputs.accountName}
               InputProps={{ readOnly: true }}
             />
           </Box>
@@ -77,7 +147,7 @@ function AccountDetails({ party, counterParty }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                value={party?.contactParty?.emailId || "Loading..."}
+                value={partyInputs.emailId}
                 label="Email"
                 InputProps={{ readOnly: true }}
               />
@@ -85,7 +155,7 @@ function AccountDetails({ party, counterParty }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                value={party?.contactParty?.phoneNo || "Loading..."}
+                value={partyInputs.phoneNo}
                 label="Phone"
                 InputProps={{ readOnly: true }}
               />
@@ -93,14 +163,14 @@ function AccountDetails({ party, counterParty }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                value={party?.contactParty?.faxNo || "Loading..."}
+                value={partyInputs.faxNo}
                 label="Fax"
                 InputProps={{ readOnly: true }}
               />
             </Box>
           </Box>
         </Box>
-        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }}>
+        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }} onClick={() => handleClickOpen(partyInputs, "party")}>
           <EditIcon />
         </IconButton>
       </Box>
@@ -114,8 +184,8 @@ function AccountDetails({ party, counterParty }) {
           padding: "15px",
           margin: "10px",
           position: "relative",
-          minWidth: "300px", // Ensure minimum width for responsiveness
-          maxWidth: "45%", // Adjusted for better spacing on larger screens
+          minWidth: "300px",
+          maxWidth: "50%",
         }}
       >
         <Typography
@@ -144,7 +214,7 @@ function AccountDetails({ party, counterParty }) {
               variant="outlined"
               size="small"
               fullWidth
-              value={counterParty?.accountCounterParty?.accountNo || "Loading..."}
+              value={counterInputs.accountNumber}
               InputProps={{ readOnly: true }}
             />
           </Box>
@@ -154,7 +224,7 @@ function AccountDetails({ party, counterParty }) {
               variant="outlined"
               size="small"
               fullWidth
-              value={counterParty?.accountCounterParty?.domain || "Loading..."}
+              value={counterInputs.domain}
               InputProps={{ readOnly: true }}
             />
           </Box>
@@ -164,7 +234,7 @@ function AccountDetails({ party, counterParty }) {
               variant="outlined"
               size="small"
               fullWidth
-              value={counterParty?.accountCounterParty?.accountName || "Loading..."}
+              value={counterInputs.accountName}
               InputProps={{ readOnly: true }}
             />
           </Box>
@@ -175,7 +245,7 @@ function AccountDetails({ party, counterParty }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                value={counterParty?.contactCounterParty?.emailId || "Loading..."}
+                value={counterInputs.emailId}
                 label="Email"
                 InputProps={{ readOnly: true }}
               />
@@ -183,7 +253,7 @@ function AccountDetails({ party, counterParty }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                value={counterParty?.contactCounterParty?.phoneNo || "Loading..."}
+                value={counterInputs.phoneNo}
                 label="Phone"
                 InputProps={{ readOnly: true }}
               />
@@ -191,17 +261,19 @@ function AccountDetails({ party, counterParty }) {
                 variant="outlined"
                 size="small"
                 fullWidth
-                value={counterParty?.contactCounterParty?.faxNo || "Loading..."}
+                value={counterInputs.faxNo}
                 label="Fax"
                 InputProps={{ readOnly: true }}
               />
             </Box>
           </Box>
         </Box>
-        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }}>
+        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }} onClick={() => handleClickOpen(counterInputs, "counterParty")}>
           <EditIcon />
         </IconButton>
       </Box>
+
+      <EditAccountModal open={open} handleClose={handleClose} selectedAccount={selectedAccount.data} onSave={handleSave} type={selectedAccount.type} />
     </Box>
   );
 }
