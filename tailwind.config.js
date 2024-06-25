@@ -3,11 +3,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        'zentrybg': '#497380',
+        'zentrybg': '#607D8B',
         'primary': '#ff6347',
         'secondary': '#4b5563',
         'accent': '#f59e0b',
-        'muted': '#6b7280'
+        'muted': '#6b7280',
+        'logocolor': '#607D8B'
       }
     }
   },

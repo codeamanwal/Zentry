@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 const navigation = [
-  { name: "Create SSI", href: "/dashboard", icon: HomeIcon },
+  { name: "Create SSI", href: "/create", icon: HomeIcon },
   { name: "Pending SSI", href: "/pending", icon: ExclamationCircleIcon },
   { name: "Completed SSI", href: "/completed", icon: ClipboardDocumentCheckIcon },
   { name: "Admin", href: "/admin", icon: Cog8ToothIcon },
@@ -47,7 +47,7 @@ export default function Sidebar() {
               leaveTo="-translate-x-full"
             >
               <Dialog.Panel className="relative flex-1 w-full max-w-xs">
-                <div className="flex flex-col h-full overflow-y-auto bg-zentrybg p-6">
+                <div className="flex flex-col h-full overflow-y-auto bg-logocolor p-6">
                   <div className="flex items-center justify-between">
                     <img
                       className="h-12 w-auto"
@@ -76,7 +76,7 @@ export default function Sidebar() {
                               isActive
                                 ? "bg-gray-800 text-white"
                                 : "text-gray-400 hover:text-white hover:bg-black",
-                              "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                              "group flex items-center px-2 py-2 text-sm font-medium rounded-md mt-5"
                             )
                           }
                         >

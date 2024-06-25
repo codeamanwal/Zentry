@@ -9,10 +9,11 @@ import Tabs from "../components/pending/Tabs";
 import { Audio } from "react-loader-spinner";
 import {
   EyeIcon,
-  PencilSquareIcon
+  PencilSquareIcon,
+  ExclamationCircleIcon,
 } from "@heroicons/react/24/outline";
 
-export default function PendingNew() {
+export default function Pending() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState(false);
@@ -133,7 +134,11 @@ export default function PendingNew() {
               ) : (
                 <>
                   <div className="space-y-8 divide-y divide-gray-300">
-                    <h2 className="text-lg leading-6 font-medium text-gray-900 border-b pb-8">
+                    <h2 className="text-lg leading-6 font-medium text-gray-900 border-b pb-8 flex flex-row">
+                      <ExclamationCircleIcon
+                        className="mr-3 h-6 w-6"
+                        aria-hidden="true"
+                      />{" "}
                       List of pending SSI Confirmations
                     </h2>
                   </div>
@@ -218,10 +223,10 @@ export default function PendingNew() {
                                         handleView(item.settlementInstructionId)
                                       }
                                     >
-                                    <EyeIcon
-                                    className="h-6 w-6"
-                                    aria-hidden="true"
-                                  />
+                                      <EyeIcon
+                                        className="h-6 w-6"
+                                        aria-hidden="true"
+                                      />
                                     </Button>
                                     <Button
                                       className="rounded-md bg-brown-600 py-1 text-xs font-semibold text-white hover:bg-brown-500"
@@ -229,10 +234,10 @@ export default function PendingNew() {
                                         handleEdit(item.settlementInstructionId)
                                       }
                                     >
-                                    <PencilSquareIcon
-                                    className="h-6 w-6"
-                                    aria-hidden="true"
-                                  />  
+                                      <PencilSquareIcon
+                                        className="h-6 w-6"
+                                        aria-hidden="true"
+                                      />
                                     </Button>
                                   </td>
                                 </tr>

@@ -8,6 +8,7 @@ import PendingForm from './pages/PendingForm';
 import Login from './pages/Login';
 import PendingNew from './pages/PendingNew'
 import PendingFormNew from './pages/PendingFormNew'
+import Create from "./pages/Create";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/create" element={<Create />} />
           <Route path="/pending" element={<Pending />} />
           <Route path="/pending/edit/:settlementId" element={<PendingFormNew />} />
           <Route path="/completed" element={<Completed />} />

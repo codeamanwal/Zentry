@@ -5,10 +5,10 @@ import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
 import AccountDetails from "../components/pending/AccountDetails";
 import DynamicInputField from "../components/pending/Box";
-import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import { ExclamationCircleIco, CogIcon } from "@heroicons/react/24/outline";
 import CommentsBox from "../components/pending/CommentBox";
 
-export default function PendingFormNew() {
+export default function Create() {
   const { settlementId } = useParams();
   const [data, setData] = useState({});
   const partyCommentsData = [
@@ -154,11 +154,11 @@ export default function PendingFormNew() {
               <div>
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg leading-6 font-medium text-gray-900 flex flex-row">
-                    <ExclamationCircleIcon
+                    <CogIcon
                       className="mr-3 h-6 w-6"
                       aria-hidden="true"
                     />{" "}
-                    Pending SSI Confirmation: {data?.settlementInstructionId}
+                    Create New SSI
                   </h2>
                 </div>
                 <div className="px-4 py-5 bg-white sm:p-6max-w-7xl">

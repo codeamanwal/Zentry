@@ -1,8 +1,10 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { useSidebar } from "../contexts/SidebarContext";
-import { Bars3Icon } from "@heroicons/react/24/outline";
-import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { Bars3Icon, UserCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronDownIcon,
+} from "@heroicons/react/20/solid";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -17,7 +19,7 @@ function classNames(...classes) {
 
 export default function SearchBar() {
   const navigate = useNavigate();
-  const [userId, setUserId] = useState()
+  const [userId, setUserId] = useState();
 
   const handleSignout = () => {
     sessionStorage.removeItem("jwtToken");
@@ -26,11 +28,11 @@ export default function SearchBar() {
   };
 
   useEffect(() => {
-    const id = sessionStorage.getItem("id")
-    if(id) {
-      setUserId(id)
+    const id = sessionStorage.getItem("id");
+    if (id) {
+      setUserId(id);
     }
-  }, [])
+  }, []);
 
   const { setSidebarOpen } = useSidebar();
 
@@ -60,11 +62,7 @@ export default function SearchBar() {
           <Menu as="div" className="relative">
             <Menu.Button className="-m-1.5 flex items-center p-1.5">
               <span className="sr-only">Open user menu</span>
-              <img
-                className="h-8 w-8 rounded-full bg-gray-50"
-                src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                alt=""
-              />
+              <UserCircleIcon className="h-8 w-8" aria-hidden="true" />
               <span className="hidden lg:flex lg:items-center">
                 <span
                   className="ml-4 text-sm font-semibold leading-6 text-gray-900"
@@ -93,7 +91,9 @@ export default function SearchBar() {
                     {({ active }) => (
                       <a
                         href={item.href}
-                        onClick={item.name === "Sign out" ? handleSignout : undefined}
+                        onClick={
+                          item.name === "Sign out" ? handleSignout : undefined
+                        }
                         className={classNames(
                           active ? "bg-gray-50" : "",
                           "block px-3 py-1 text-sm leading-6 text-gray-900"

@@ -21,3 +21,7 @@ code {
       padding-left: 16rem;
   }
 }
+
+html, body, #root {
+  height: 100%;
+}
