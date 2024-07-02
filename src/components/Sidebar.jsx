@@ -74,9 +74,9 @@ export default function Sidebar() {
                           className={({ isActive }) =>
                             classNames(
                               isActive
-                                ? "bg-gray-800 text-white"
+                                ? "bg-gray-800"
                                 : "text-gray-400 hover:text-white hover:bg-black",
-                              "group flex items-center px-2 py-2 text-sm font-medium rounded-md mt-5"
+                              "group flex items-center px-2 py-2 text-sm font-medium rounded-md mt-3 text-white"
                             )
                           }
                         >
@@ -106,7 +106,7 @@ export default function Sidebar() {
               alt="Zentry"
             />
           </div>
-          <div className="mt-5 flex-1 flex flex-col">
+          <div className="mt-3 flex-1 flex flex-col">
             <nav className="flex-1 px-2 space-y-1">
               {navigation.map((item) => (
                 <NavLink
@@ -115,9 +115,9 @@ export default function Sidebar() {
                   className={({ isActive }) =>
                     classNames(
                       isActive
-                        ? "bg-gray-800 text-white"
-                        : "text-white hover:text-white hover:bg-gray-800",
-                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md"
+                        ? "bg-gray-800"
+                        : "hover:text-white hover:bg-gray-800",
+                      "group flex items-center px-2 py-2 text-sm font-medium rounded-md text-white"
                     )
                   }
                 >
