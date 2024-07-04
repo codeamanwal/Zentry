@@ -3,34 +3,87 @@ import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import SearchBar from "../components/SearchBar";
+import AccountDetails from "../components/pending/AccountDetails";
+import CustomBox from "../components/pending/CustomBox";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import CommentsBox from "../components/pending/CommentBox";
+import PendingSSIConfirmModal from "../components/pending/PendingSSIConfirmModal"; // Ensure this import is correct
 
 export default function PendingForm() {
   const { settlementId } = useParams();
   const [data, setData] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [ssiType, setSsiType] = useState(""); // Added to manage which SSI type
+  const partyCommentsData = [
+    {
+      date: "02.06.2024 08:00:01",
+      user: "user@credit-suisse.com",
+      text: "jhhfjhm jhfjdhf hgsjhi jhjdc",
+    },
+    {
+      date: "01.06.2024 15:10:01",
+      user: "user_2@credit-suisse.com",
+      text: ",mkjjlmkjvij jhkdj jjhkvjkv",
+    },
+  ];
 
-  // console.log('settlementId',settlementId)
+  const counterPartyCommentsData = [
+    {
+      date: "02.06.2024 09:00:01",
+      user: "user@ubs.com",
+      text: "öcöpcopölö lllklk o öp",
+    },
+    {
+      date: "01.06.2024 14:10:01",
+      user: "user_1@ubs.com",
+      text: "llkjoijoklkjc ijockl jc jjokclc",
+    },
+  ];
 
-  const [inputs1, setInputs1] = useState({
-    BUYR: ["", "", ""],
-    RECU: ["S", "", ""],
-    REI1: ["R", "", ""],
-    REAG: ["Q", "", "", "", ""],
-    PSET_1: ["", "", ""],
-    SELL: ["", "", ""],
-    DECU: ["", "", ""],
-    DEI1: ["", "", ""],
-    DEAG: ["", "", "", ""],
-    PSET_2: ["", "", ""],
+  const currentUser = "current_user@credit-suisse.com"; // Statically set for now
+  const isPartySide = true;
+
+  const [buyInputs, setBuyInputs] = useState({
+    BUYR: ["P", "", ""],
+    RECU: ["P", "", ""],
+    REI1: ["P", "", ""],
+    REAG: ["P", "", "", "", ""],
+    PSET: ["P", "", ""],
+    proposed_BUYR: ["P", "", ""],
+    proposed_RECU: ["P", "", ""],
+    proposed_REI1: ["P", "", ""],
+    proposed_REAG: ["P", "", "", "", ""],
+    proposed_PSET: ["P", "", ""],
   });
 
-  const handleInputChange = (section, index) => (event) => {
+  const [sellInputs, setSellInputs] = useState({
+    SELL: ["P", "", ""],
+    DECU: ["P", "", ""],
+    DEI1: ["P", "", ""],
+    DEAG: ["P", "", "", ""],
+    PSET: ["P", "", ""],
+    proposed_SELL: ["P", "", ""],
+    proposed_DECU: ["P", "", ""],
+    proposed_DEI1: ["P", "", ""],
+    proposed_DEAG: ["P", "", "", ""],
+    proposed_PSET: ["P", "", ""],
+  });
+
+  const handleInputChange = (section, index, isBuy) => (event) => {
     const { value } = event.target;
-    console.log(value);
-    setInputs1((prev) => {
-      const newSection = [...prev[section]];
-      newSection[index] = value;
-      return { ...prev, [section]: newSection };
-    });
+    if (isBuy) {
+      setBuyInputs((prev) => {
+        const newSection = [...prev[section]];
+        newSection[index] = value;
+        return { ...prev, [section]: newSection };
+      });
+    } else {
+      setSellInputs((prev) => {
+        const newSection = [...prev[section]];
+        newSection[index] = value;
+        return { ...prev, [section]: newSection };
+      });
+    }
   };
 
   useEffect(() => {
@@ -54,7 +107,8 @@ export default function PendingForm() {
 
         console.log("settlementInstructionID", settlementInstructionID);
         setData(settlementInstructionID);
-        setInputs1(populateStateFromData(settlementInstructionID));
+        setBuyInputs(populateStateFromData(settlementInstructionID, true));
+        setSellInputs(populateStateFromData(settlementInstructionID, false));
       } catch (error) {
         console.log(error);
       }
@@ -63,8 +117,8 @@ export default function PendingForm() {
     fetchData();
   }, []);
 
-  const populateStateFromData = (data) => {
-    const newState = { ...inputs1 };
+  const populateStateFromData = (data, isBuy) => {
+    const newState = isBuy ? { ...buyInputs } : { ...sellInputs };
 
     data.settlementInstructionParty.partyChain.forEach((party) => {
       const { partyQualifier, party: partyData } = party;
@@ -77,9 +131,11 @@ export default function PendingForm() {
     data.settlementInstructionParty.proposedCounterPartyChain.forEach(
       (party) => {
         const { partyQualifier, party: partyData } = party;
-        if (newState[partyQualifier]) {
-          newState[partyQualifier][0] = partyData.partyFormat || "";
-          newState[partyQualifier][1] = partyData.identifierCode || "";
+        if (newState[`proposed_${partyQualifier}`]) {
+          newState[`proposed_${partyQualifier}`][0] =
+            partyData.partyFormat || "";
+          newState[`proposed_${partyQualifier}`][1] =
+            partyData.identifierCode || "";
         }
       }
     );
@@ -87,993 +143,732 @@ export default function PendingForm() {
     return newState;
   };
 
+  const handleCheckboxChange = (type) => () => {
+    setSsiType(type);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleSave = (comments) => {
+    // Logic to save the comments or any other data handling
+    console.log("Saved comments:", comments);
+    setModalOpen(false);
+  };
+
   return (
     <>
       <div>
         <Sidebar />
-        <div className="lg:pl-64">
+        <div className="lg:pl-72">
           <SearchBar />
           <main className="py-10">
             <div
-              className="max-w-4xl mx-auto p-5 bg-white rounded-md shadow"
+              className="max-w-9xl mx-auto p-5 bg-white rounded-md shadow"
               style={{ maxHeight: "80vh", overflowY: "auto" }}
             >
-              <form className="space-y-8 divide-y divide-gray-300">
+              <div>
                 <div className="flex items-center justify-between">
-                  <h2 className="text-lg leading-6 font-medium text-gray-900">
+                  <h2 className="text-lg leading-6 font-medium text-gray-900 flex flex-row">
+                    <ExclamationCircleIcon
+                      className="mr-3 h-6 w-6"
+                      aria-hidden="true"
+                    />{" "}
                     Pending SSI Confirmation: {data?.settlementInstructionId}
                   </h2>
                 </div>
+                <div className="px-4 py-5 bg-white sm:p-6max-w-7xl">
+                  <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4">
+                    <div className="flex flex-row justify-center col-span-2 items-center">
+                      <label
+                        htmlFor="securitiesId"
+                        className="block text-sm font-medium text-gray-900"
+                      >
+                        Securities ID
+                      </label>
+                      <div className="">
+                        <select
+                          id="country"
+                          name="country"
+                          autoComplete="country-name"
+                          className="ml-4 pl-1 block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        >
+                          <option>ISIN</option>
+                          <option>SSI 1</option>
+                          <option>SSI 2</option>
+                          <option>SSI 3</option>
+                        </select>
+                      </div>
 
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                  <div className="sm:col-span-4 mt-5">
-                    <label
-                      htmlFor="username"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Unique Reference
-                    </label>
-                    <div className="mt-2">
-                      <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
-                        <input
-                          type="text"
-                          name="username"
-                          id="username"
-                          autoComplete="username"
-                          className="block flex-1 border-0 bg-transparent py-1.5 pl- text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 pl-3"
-                          placeholder={
-                            data?.settlementInstructionId || "Loading..."
-                          }
-                          disabled
-                        />
+                      <input
+                        type="text"
+                        name="securitiesId"
+                        id="securitiesId"
+                        autoComplete="securities-id"
+                        className="ml-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 border-black block w-full shadow-sm sm:text-sm border rounded-md"
+                        value={data?.settlementInstructionId || "Loading..."}
+                      />
+                    </div>
+
+                    <div className="flex flex-row justify-center col-span-2 items-center">
+                      <label
+                        htmlFor="currency"
+                        className="block text-sm font-medium text-gray-900"
+                      >
+                        Currency
+                      </label>
+                      <input
+                        type="text"
+                        name="currency"
+                        id="currency"
+                        autoComplete="currency"
+                        className="ml-4 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-black border rounded-md"
+                        value={data?.currency || "Loading..."}
+                      />
+                    </div>
+
+                    <div className="flex flex-row justify-center col-span-2 items-center">
+                      <label
+                        htmlFor="securitiesName"
+                        className="block text-sm font-medium text-gray-900"
+                      >
+                        Securities Name
+                      </label>
+                      <input
+                        type="text"
+                        name="securitiesName"
+                        id="securitiesName"
+                        autoComplete="securities-name"
+                        className="mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-black border rounded-md"
+                        value={data?.securitiesName || "Loading..."}
+                      />
+                    </div>
+
+                    <div className="flex flex-row justify-center col-span-2 items-center">
+                      <label
+                        htmlFor="quantity"
+                        className="block text-sm font-medium text-gray-900"
+                      >
+                        Quantity
+                      </label>
+                      <input
+                        type="number"
+                        name="quantity"
+                        id="quantity"
+                        autoComplete="quantity"
+                        className="ml-4 p-2 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-black border rounded-md"
+                        value={data?.amount || "Loading..."}
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <AccountDetails party={data} counterParty={data} />
+                </div>
+                <div className="flex justify-center items-center justify-between mx-2">
+                  <div className="border p-3 bg-gray-300">
+                    <p>Recommended SSI</p>
+                  </div>
+                  <div>
+                    <div className="flex justify-center items-center">
+                      <label
+                        htmlFor="SSI option"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        SSI Details
+                      </label>
+                      <div className="ml-2">
+                        <select
+                          id="country"
+                          name="country"
+                          autoComplete="country-name"
+                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        >
+                          <option>Select SSI from pre-configured list</option>
+                          <option>SSI 1</option>
+                          <option>SSI 2</option>
+                          <option>SSI 3</option>
+                        </select>
                       </div>
                     </div>
                   </div>
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="account"
-                      className="block text-sm font-medium leading-6 text-gray-900"
+                </div>
+                <div>
+                  <form className="space-y-8 divide-y divide-gray-300">
+                    <div
+                      className="mt-10 pt-10 grid grid-cols-4 gap-3 mr-3"
+                      style={{ minWidth: "1385px" }}
                     >
-                      Account
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        name="account"
-                        id="account"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-3"
-                        placeholder={
-                          data?.accountParty?.accountName || "Loading..."
+                      <CustomBox
+                        title="BUYR Proposed"
+                        inputs={buyInputs.proposed_BUYR}
+                        setInputs={(newValues) =>
+                          setBuyInputs({
+                            ...buyInputs,
+                            proposed_BUYR: newValues,
+                          })
                         }
-                        disabled
+                        fieldId="proposed_BUYR"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
                       />
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="email"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Email Address
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3"
-                        placeholder={
-                          data?.contactParty?.emailId || "Loading..."
+                      <CustomBox
+                        title="BUYR"
+                        inputs={buyInputs.BUYR}
+                        setInputs={(newValues) =>
+                          setBuyInputs({ ...buyInputs, BUYR: newValues })
                         }
-                        disabled
+                        fieldId="BUYR"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
                       />
-                    </div>
-                  </div>
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="isin"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      ISIN
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        type="text"
-                        name="isin"
-                        id="isin"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3"
-                        placeholder={data?.securitiesIdScheme || "Loading..."}
-                        disabled
+                      <CustomBox
+                        title="SELL"
+                        inputs={sellInputs.SELL}
+                        setInputs={(newValues) =>
+                          setSellInputs({ ...sellInputs, SELL: newValues })
+                        }
+                        fieldId="SELL"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
                       />
-                    </div>
-                  </div>
+                      <CustomBox
+                        title="SELL Proposed"
+                        inputs={sellInputs.proposed_SELL}
+                        setInputs={(newValues) =>
+                          setSellInputs({
+                            ...sellInputs,
+                            proposed_SELL: newValues,
+                          })
+                        }
+                        fieldId="proposed_SELL"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="RECU Proposed"
+                        inputs={buyInputs.proposed_RECU}
+                        setInputs={(newValues) =>
+                          setBuyInputs({
+                            ...buyInputs,
+                            proposed_RECU: newValues,
+                          })
+                        }
+                        fieldId="proposed_RECU"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="RECU"
+                        inputs={buyInputs.RECU}
+                        setInputs={(newValues) =>
+                          setBuyInputs({ ...buyInputs, RECU: newValues })
+                        }
+                        fieldId="RECU"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="DECU"
+                        inputs={sellInputs.DECU}
+                        setInputs={(newValues) =>
+                          setSellInputs({ ...sellInputs, DECU: newValues })
+                        }
+                        fieldId="DECU"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1={1}
+                        index2="97A::SAFE"
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="DECU Proposed"
+                        inputs={sellInputs.proposed_DECU}
+                        setInputs={(newValues) =>
+                          setSellInputs({
+                            ...sellInputs,
+                            proposed_DECU: newValues,
+                          })
+                        }
+                        fieldId="proposed_DECU"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="REI1 Proposed"
+                        inputs={buyInputs.proposed_REI1}
+                        setInputs={(newValues) =>
+                          setBuyInputs({
+                            ...buyInputs,
+                            proposed_REI1: newValues,
+                          })
+                        }
+                        fieldId="proposed_REI1"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="REI1"
+                        inputs={buyInputs.REI1}
+                        setInputs={(newValues) =>
+                          setBuyInputs({ ...buyInputs, REI1: newValues })
+                        }
+                        fieldId="REI1"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="DEI1"
+                        inputs={sellInputs.DEI1}
+                        setInputs={(newValues) =>
+                          setSellInputs({ ...sellInputs, DEI1: newValues })
+                        }
+                        fieldId="DEI1"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="DEI1 Proposed"
+                        inputs={sellInputs.proposed_DEI1}
+                        setInputs={(newValues) =>
+                          setSellInputs({
+                            ...sellInputs,
+                            proposed_DEI1: newValues,
+                          })
+                        }
+                        fieldId="DEI1"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="REAG Proposed"
+                        inputs={buyInputs.proposed_REAG}
+                        setInputs={(newValues) =>
+                          setBuyInputs({
+                            ...buyInputs,
+                            proposed_REAG: newValues,
+                          })
+                        }
+                        fieldId="REAG"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={4}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="REAG"
+                        inputs={buyInputs.REAG}
+                        setInputs={(newValues) =>
+                          setBuyInputs({ ...buyInputs, REAG: newValues })
+                        }
+                        fieldId="REAG"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={4}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="DEAG"
+                        inputs={sellInputs.DEAG}
+                        setInputs={(newValues) =>
+                          setSellInputs({ ...sellInputs, DEAG: newValues })
+                        }
+                        fieldId="DEAG"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={4}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="DEAG Proposed"
+                        inputs={sellInputs.proposed_DEAG}
+                        setInputs={(newValues) =>
+                          setSellInputs({
+                            ...sellInputs,
+                            proposed_DEAG: newValues,
+                          })
+                        }
+                        fieldId="DEAG"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={4}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="PSET Proposed"
+                        inputs={buyInputs.proposed_PSET}
+                        setInputs={(newValues) =>
+                          setBuyInputs({
+                            ...buyInputs,
+                            proposed_PSET: newValues,
+                          })
+                        }
+                        fieldId="PSET"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
 
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="quantity"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      Quantity
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        id="quantity"
-                        name="quantity"
-                        type="number"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 pl-3"
-                        placeholder={data?.amount || "Loading..."}
-                        disabled
+                      <CustomBox
+                        title="PSET"
+                        inputs={buyInputs.PSET}
+                        setInputs={(newValues) =>
+                          setBuyInputs({ ...buyInputs, PSET: newValues })
+                        }
+                        fieldId="PSET_1"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="PSET"
+                        inputs={sellInputs.PSET}
+                        setInputs={(newValues) =>
+                          setSellInputs({ ...sellInputs, PSET: newValues })
+                        }
+                        fieldId="PSET_2"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                      />
+                      <CustomBox
+                        title="PSET Proposed"
+                        inputs={sellInputs.proposed_PSET}
+                        setInputs={(newValues) =>
+                          setSellInputs({
+                            ...sellInputs,
+                            proposed_PSET_2: newValues,
+                          })
+                        }
+                        fieldId="PSET_2"
+                        labelOptions={[
+                          { value: "P", label: "95P" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
+                        handleInputChange={handleInputChange}
+                        index1="97A::SAFE"
+                        index2={2}
+                        selectOptions={[
+                          { value: "P", label: "70E::DECL" },
+                          { value: "Q", label: "95Q" },
+                          { value: "R", label: "95R" },
+                          { value: "S", label: "95S" },
+                        ]}
                       />
                     </div>
-                  </div>
-
-                  <div className="sm:col-span-3">
-                    <label
-                      htmlFor="SSI option"
-                      className="block text-sm font-medium leading-6 text-gray-900"
+                    <div
+                      className="grid grid-cols-2 gap-3"
+                      style={{ minWidth: "1380px" }}
                     >
-                      SSI Details
-                    </label>
-                    <div className="mt-2">
-                      <select
-                        id="country"
-                        name="country"
-                        autoComplete="country-name"
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      <CommentsBox
+                        title="Comments / remarks - Party side"
+                        commentsData={partyCommentsData}
+                        user={currentUser}
+                        isActive={isPartySide}
+                      />
+                      <CommentsBox
+                        title="Comments / remarks - Counter Party side"
+                        commentsData={counterPartyCommentsData}
+                        user={currentUser}
+                        isActive={!isPartySide}
+                      />
+                      <Box
+                        sx={{
+                          padding: "5px",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          margin: "10px 0 0 0",
+                        }}
                       >
-                        <option>Select SSI from pre-configured list</option>
-                        <option>SSI 1</option>
-                        <option>SSI 2</option>
-                        <option>SSI 3</option>
-                      </select>
+                        <label>Confirm SSI</label>
+                        <input
+                          onChange={handleCheckboxChange("party")}
+                          type="checkbox"
+                          name="confirm"
+                          value=""
+                          style={{ marginLeft: "5px" }}
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          padding: "5px",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          margin: "10px 0 0 0",
+                        }}
+                      >
+                        <label>Confirm SSI</label>
+                        <input
+                          onChange={handleCheckboxChange("counterParty")}
+                          type="checkbox"
+                          name="confirm"
+                          value=""
+                          style={{ marginLeft: "5px", border: "1px red" }}
+                        />
+                      </Box>
                     </div>
-                  </div>
+                  </form>
                 </div>
 
-                <div className="mt-10 pt-10">
-                  <Box
-                    sx={{
-                      display: "flex",
-                      gap: "30px",
-                      flexDirection: { sm: "row", xs: "column" },
-                    }}
-                  >
-                    <Box
-                      sx={{
-                        flex: "1",
-                        minWidth: "0",
-                        display: "flex",
-                        gap: "14px",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          BUYR
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="BUYR_label"
-                            name="BUYR_label"
-                            value={inputs1.BUYR[0]}
-                            onChange={handleInputChange("BUYR", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("BUYR", 1)}
-                            type="text"
-                            name="BUYR_input1"
-                            value={inputs1.BUYR[1]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("BUYR", 2)}
-                            type="text"
-                            name="BUYR_input2"
-                            value={inputs1.BUYR[2]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          RECU
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="RECU_label"
-                            name="RECU_label"
-                            value={inputs1.RECU[0]}
-                            onChange={handleInputChange("RECU", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("RECU", 1)}
-                            type="text"
-                            name="RECU_input1"
-                            value={inputs1.RECU[1]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("RECU", 2)}
-                            type="text"
-                            name="RECU_input2"
-                            value={inputs1.RECU[2]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          REI1
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="REI1_label"
-                            name="REI1_label"
-                            value={inputs1.REI1[0]}
-                            onChange={handleInputChange("REI1", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("REI1", 1)}
-                            type="text"
-                            name="REI1_input1"
-                            value={inputs1.REI1[1]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("REI1", 2)}
-                            type="text"
-                            name="REI1_input2"
-                            value={inputs1.REI1[2]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          REAG
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="REAG_label"
-                            name="REAG_label"
-                            value={inputs1.REAG[0]}
-                            onChange={handleInputChange("REAG", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("REAG", 1)}
-                            type="text"
-                            name="REAG_input1"
-                            value={
-                              inputs1.REAG[1] + " " + 
-                              inputs1.REAG[2] + " " +
-                              inputs1.REAG[3]
-                            }
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("REAG", 4)}
-                            type="text"
-                            name="REAG_input4"
-                            value={inputs1.REAG[4]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          PSET
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="PSET1_label"
-                            name="PSET1_label"
-                            value={inputs1.PSET_1[0]}
-                            onChange={handleInputChange("PSET_1", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("PSET_1", 1)}
-                            type="text"
-                            name="PSET1_input1"
-                            value={inputs1.PSET_1[1]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#e4efb6",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("PSET_1", 2)}
-                            type="text"
-                            name="PSET1_input2"
-                            value={inputs1.PSET_1[2]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                      </Box>
-                    </Box>
-                    <Box
-                      sx={{
-                        flex: "1",
-                        minWidth: "0",
-                        display: "flex",
-                        gap: "10px",
-                        flexDirection: "column",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          SELL
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="SELL_label"
-                            name="SELL_label"
-                            value={inputs1.SELL[0]}
-                            onChange={handleInputChange("SELL", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("SELL", 1)}
-                            type="text"
-                            name="SELL_input1"
-                            value={inputs1.SELL[1]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#f4dcde",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("SELL", 2)}
-                            type="text"
-                            name="SELL_input2"
-                            value={inputs1.SELL[2]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#f4dcde",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          margin: "4px 0 0 0",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          DECU
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="DECU_label"
-                            name="DECU_label"
-                            value={inputs1.DECU[0]}
-                            onChange={handleInputChange("DECU", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("DECU", 1)}
-                            type="text"
-                            name="DECU_input1"
-                            value={inputs1.DECU[1]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("DECU", 2)}
-                            type="text"
-                            name="DECU_input2"
-                            value={inputs1.DECU[2]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          margin: "4px 0 0 0",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          DEI1
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="DEI1_label"
-                            name="DEI1_label"
-                            value={inputs1.DEI1[0]}
-                            onChange={handleInputChange("DEI1", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("DEI1", 1)}
-                            type="text"
-                            name="DEI1_input1"
-                            value={inputs1.DEI1[1]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("DEI1", 2)}
-                            type="text"
-                            name="DEI1_input2"
-                            value={inputs1.DEI1[2]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          margin: "4px 0 0 0",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          DEAG
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="DEAG_label"
-                            name="DEAG_label"
-                            value={inputs1.DEAG[0]}
-                            onChange={handleInputChange("DEAG", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("DEAG", 1)}
-                            type="text"
-                            name="DEAG_input1"
-                            value={inputs1.DEAG[1] + " " + 
-                            inputs1.DEAG[2] + " " +
-                            inputs1.DEAG[3]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#f4dcde",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("DEAG", 4)}
-                            type="text"
-                            name="DEAG_input4"
-                            value={inputs1.DEAG[4]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: "10px",
-                          flexDirection: "column",
-                          border: "1px solid lightgrey",
-                          padding: "15px",
-                          margin: "4px 0 0 0",
-                          position: "relative",
-                        }}
-                      >
-                        <Typography
-                          sx={{
-                            position: "absolute",
-                            backgroundColor: "#fff",
-                            fontSize: "11px",
-                            top: "-9px",
-                            padding: "0 5px",
-                          }}
-                        >
-                          PSET
-                        </Typography>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <select
-                            id="PSET2_label"
-                            name="PSET2_label"
-                            value={inputs1.PSET_2[0]}
-                            onChange={handleInputChange("PSET_2", 0)}
-                          >
-                            <option value="P">95P</option>
-                            <option value="Q">95Q</option>
-                            <option value="R">95R</option>
-                            <option value="S">95S</option>
-                          </select>
-                          <input
-                            onChange={handleInputChange("PSET_2", 1)}
-                            type="text"
-                            name="PSET2_input1"
-                            value={inputs1.PSET_2[1]}
-                            style={{
-                              padding: "5px",
-                              backgroundColor: "#f4dcde",
-                              outline: "auto",
-                              border: "none",
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "grid",
-                            gap: "5px",
-                            gridTemplateColumns: {
-                              md: "100px 200px",
-                              sm: "80px 160px",
-                            },
-                          }}
-                        >
-                          <label>Account</label>
-                          <input
-                            onChange={handleInputChange("PSET_2", 2)}
-                            type="text"
-                            name="PSET2_input2"
-                            value={inputs1.PSET_2[2]}
-                            style={{ padding: "5px", outline: "auto" }}
-                          />
-                        </Box>
-                      </Box>
-                    </Box>
-                  </Box>
-                  <Box
-                    sx={{
-                      padding: "5px",
-                      display: "flex",
-                      alignItems: "center",
-                      margin: "10px 0 0 0",
-                    }}
-                  >
-                    <label>Confirm SSI</label>
-                    <input
-                      onChange={handleInputChange}
-                      type="checkbox"
-                      name="confirm"
-                      value=""
-                      style={{ marginLeft: "5px" }}
-                    />
-                  </Box>
-                </div>
-
-                <div className="pt-8 flex justify-end">
+                <div className="divide-y divide-gray-300 pt-8 flex justify-start">
                   <button
                     type="reset"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Reset
+                    Back
                   </button>
                   <button
                     type="reset"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4"
                   >
-                    Propose new C/P SSi
+                    Confirm SSI
                   </button>
                   <button
                     type="submit"
-                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-zentrybg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Confirm SSI
+                    Edit
                   </button>
                 </div>
-              </form>
+              </div>
             </div>
           </main>
         </div>
       </div>
+      <PendingSSIConfirmModal
+        open={modalOpen}
+        handleClose={handleModalClose}
+        selectedAccount={data}
+        onSave={handleSave}
+        type={ssiType}
+      />
     </>
   );
 }

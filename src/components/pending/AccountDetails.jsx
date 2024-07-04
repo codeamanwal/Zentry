@@ -87,7 +87,6 @@ function AccountDetails({ party, counterParty }) {
           margin: "10px",
           position: "relative",
           minWidth: "300px",
-          maxWidth: "50%",
         }}
       >
         <Typography
@@ -185,7 +184,6 @@ function AccountDetails({ party, counterParty }) {
           margin: "10px",
           position: "relative",
           minWidth: "300px",
-          maxWidth: "50%",
         }}
       >
         <Typography

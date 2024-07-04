@@ -51,19 +51,19 @@ const CommentsBox = ({ title, commentsData, user, isActive }) => {
           <TextField
             fullWidth
             multiline
-            rows={4}
+            rows={2}
             variant="outlined"
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Add a new comment"
           />
           <Box
-            sx={{ display: "flex", flexDirection: "row", justifyContent: "" }}
+            sx={{ display: "flex", marginLeft: "5px", flexDirection: "column"}}
           >
             <Button
               variant="outlined"
               onClick={handleReset}
-              sx={{ marginRight: "10px" }}
+              sx={{ marginBottom: "5px" }}
             >
               Reset
             </Button>

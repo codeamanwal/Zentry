@@ -1,20 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import SearchBar from "../components/SearchBar";
-import AccountDetails from "../components/pending/AccountDetails";
-import CustomBox from "../components/pending/CustomBox";
-import {
-  HomeIcon,
-  ExclamationCircleIcon,
-  ClipboardDocumentCheckIcon,
-  Cog8ToothIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import CommentsBox from "../components/pending/CommentBox";
+import Sidebar from "../Sidebar";
+import SearchBar from "../SearchBar";
+import AccountDetails from "../pending/AccountDetails";
+import CustomBox from "../pending/CustomBox";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import CommentsBox from "../pending/CommentBox";
 
-export default function Create() {
+export default function ViewCompletedForm() {
   const { settlementId } = useParams();
   const [data, setData] = useState({});
   const partyCommentsData = [
@@ -90,38 +84,34 @@ export default function Create() {
   };
 
   useEffect(() => {
-    const staticData = {
-      settlementInstructionId: "123456",
-      currency: "USD",
-      securitiesName: "ABC Corp",
-      amount: 1000,
-      settlementInstructionParty: {
-        partyChain: [
+    const token = sessionStorage.getItem("jwtToken");
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://zentry-app.azurewebsites.net/api/zentry/party/settlementInstructions/${settlementId}`,
           {
-            partyQualifier: "BUYR",
-            party: { partyFormat: "P", identifierCode: "123" },
-          },
-          {
-            partyQualifier: "RECU",
-            party: { partyFormat: "P", identifierCode: "456" },
-          },
-        ],
-        proposedCounterPartyChain: [
-          {
-            partyQualifier: "SELL",
-            party: { partyFormat: "P", identifierCode: "789" },
-          },
-          {
-            partyQualifier: "DECU",
-            party: { partyFormat: "P", identifierCode: "012" },
-          },
-        ],
-      },
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Something went wrong");
+        }
+        const settlementInstructionID = await response.json();
+
+        console.log("settlementInstructionID", settlementInstructionID);
+        setData(settlementInstructionID);
+        setBuyInputs(populateStateFromData(settlementInstructionID, true));
+        setSellInputs(populateStateFromData(settlementInstructionID, false));
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    setData(staticData);
-    setBuyInputs(populateStateFromData(staticData, true));
-    setSellInputs(populateStateFromData(staticData, false));
+    fetchData();
   }, []);
 
   const populateStateFromData = (data, isBuy) => {
@@ -164,15 +154,15 @@ export default function Create() {
               <div>
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg leading-6 font-medium text-gray-900 flex flex-row">
-                    <Cog8ToothIcon
+                    <ExclamationCircleIcon
                       className="mr-3 h-6 w-6"
                       aria-hidden="true"
                     />{" "}
-                    Create
+                    Completed SSI Confirmation: {data?.settlementInstructionId}
                   </h2>
                 </div>
                 <div className="px-4 py-5 bg-white sm:p-6max-w-7xl">
-                  <div className="grid lg:grid-cols-6 md:grid-cols-4 gap-4">
+                  <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4">
                     <div className="flex flex-row justify-center col-span-2 items-center">
                       <label
                         htmlFor="securitiesId"
@@ -219,25 +209,6 @@ export default function Create() {
                         className="ml-4 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-black border rounded-md"
                         value={data?.currency || "Loading..."}
                       />
-                    </div>
-                    <div className="flex flex-row justify-left col-span-2 items-center">
-                      <label
-                        htmlFor="securitiesId"
-                        className="block text-sm font-medium text-gray-900"
-                      >
-                        Party Side
-                      </label>
-                      <div className="">
-                        <select
-                          id="country"
-                          name="country"
-                          autoComplete="country-name"
-                          className="ml-4 pl-1 block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        >
-                          <option>BUY</option>
-                          <option>SELL</option>
-                        </select>
-                      </div>
                     </div>
 
                     <div className="flex flex-row justify-center col-span-2 items-center">
@@ -824,6 +795,7 @@ export default function Create() {
                           name="confirm"
                           value=""
                           style={{ marginLeft: "5px" }}
+                          checked
                         />
                       </Box>
                       <Box
@@ -842,6 +814,7 @@ export default function Create() {
                           name="confirm"
                           value=""
                           style={{ marginLeft: "5px", border: "1px red" }}
+                          checked
                         />
                       </Box>
                     </div>
@@ -853,19 +826,14 @@ export default function Create() {
                     type="reset"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Reset
+                    Copy & Create
                   </button>
-                  <button
-                    type="reset"
-                    className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4"
-                  >
-                    Propose new C/P SSi
-                  </button>
+                  
                   <button
                     type="submit"
                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-zentrybg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Confirm SSI
+                    Back
                   </button>
                 </div>
               </div>

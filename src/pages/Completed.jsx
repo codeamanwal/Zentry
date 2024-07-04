@@ -4,12 +4,10 @@ import React from "react";
 import { Modal, Box, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import ViewCompletedForm from "../components/ViewCompletedForm";
+import ViewCompletedForm from "../components/completed/ViewCompletedForm";
 import Tabs from "../components/pending/Tabs";
-import {
-  EyeIcon,
-  PencilSquareIcon
-} from "@heroicons/react/24/outline";
+import { EyeIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import AuditModal from "../components/completed/AuditModal";
 
 export default function Completed() {
   const navigate = useNavigate();
@@ -30,9 +28,7 @@ export default function Completed() {
       },
       status: "Completed",
       settlementInstructionParty: {
-        partyChain: [
-          { partyQualifier: "Instruction 1" },
-        ],
+        partyChain: [{ partyQualifier: "Instruction 1" }],
       },
     },
     {
@@ -47,9 +43,7 @@ export default function Completed() {
       },
       status: "Cancelled",
       settlementInstructionParty: {
-        partyChain: [
-          { partyQualifier: "Instruction 2" },
-        ],
+        partyChain: [{ partyQualifier: "Instruction 2" }],
       },
     },
     {
@@ -64,9 +58,7 @@ export default function Completed() {
       },
       status: "Cancelled",
       settlementInstructionParty: {
-        partyChain: [
-          { partyQualifier: "Instruction 3" },
-        ],
+        partyChain: [{ partyQualifier: "Instruction 3" }],
       },
     },
     {
@@ -81,16 +73,14 @@ export default function Completed() {
       },
       status: "Completed",
       settlementInstructionParty: {
-        partyChain: [
-          { partyQualifier: "Instruction 4" },
-        ],
+        partyChain: [{ partyQualifier: "Instruction 4" }],
       },
     },
   ];
 
   const handleView = (id) => {
     setSettlementID(id);
-    setOpen(true);
+    navigate("/completed/view/664bc426f5aa2760a92c3fb2");
   };
 
   const handleClose = () => {
@@ -109,6 +99,11 @@ export default function Completed() {
       current: activeTab === "CounterParty owned",
     },
   ];
+
+  const handleAudit = (id) => {
+    setSettlementID(id);
+    setOpen(true)
+  };
 
   const activeDataSet = settlementInstructionCompleted;
 
@@ -205,9 +200,9 @@ export default function Completed() {
                                   )
                                 )}
                               </td>
-                              <td className="py-4 text-sm text-center flex flex-row">
-                                <Button
-                                  className="rounded-md bg-brown-600 py-1 text-xs font-semibold text-white hover:bg-brown-500"
+                              <td className="py-4 text-sm text-center flex flex-row justify-center items-center">
+                                <div
+                                  className="cursor-pointer m-2"
                                   onClick={() =>
                                     handleView(item.settlementInstructionId)
                                   }
@@ -216,7 +211,15 @@ export default function Completed() {
                                     className="h-6 w-6"
                                     aria-hidden="true"
                                   />
-                                </Button>
+                                </div>
+                                <div
+                                  className="cursor-pointer m-2"
+                                  onClick={() =>
+                                    handleAudit(item.settlementInstructionId)
+                                  }
+                                >
+                                  <img className="h-6 w-6" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAAAsTAAALEwEAmpwYAAABgElEQVR4nO2W30oCQRTGf11kF+l7GAZRQX+8qDeInqR6jyJJDXqLLqKL6ikie4OKLsMs1JKJA9/StKir7mQkfnAuZuabPb85Z3ZZmGp07QPPij3GrF3AxWInZAI3YGwCxSH8wQEi/RqAr0Efkmbv/wBwI5R7MgDSaArgJuIOuL8GSKOxAhSAElADGsC797xCGgCXUOYMUAE++7SlA5SBudAAGeBGc00lWQfmFRuCa8lzrT3BWlCR/wFY6uNbBh7lrYQCKKjszYTkkVZUCWvHYgiAkrwnCb4thamqPeUQAPfyrmlsPT8AZmLJG4q87oTT3tQAdXmzGl9qfCaIbSX253Iav4UEyMVOa3PnXZLjAdRDANTktdcukn/qeHL0M2vzdyEAjnu8VhFEPLnpVHuOkgCGiZbec1/5LslXgTbwofVgAE4fmThEPPmTvFa5YLJv+4VXiar6nFUUVfa2PFfAbLj03xDWUyttrwrZmp08eHJfC8AhcAu8AK+67QZnaz/0Bba+MmEyxIjrAAAAAElFTkSuQmCC" />
+                                </div>
                               </td>
                             </tr>
                           ))}
@@ -241,9 +244,14 @@ export default function Completed() {
           }}
         >
           <Box>
-            <ViewCompletedForm
-              settlementId={settlementID}
-              onClose={handleClose}
+            <AuditModal
+              uniqueId={settlementID}
+              open={open}
+              handleClose={handleClose}
+              selectedAccount={null}
+              onSave={(comments) => console.log(comments)}
+              type="party"
+              user="test1@test.com"
             />
           </Box>
         </Modal>

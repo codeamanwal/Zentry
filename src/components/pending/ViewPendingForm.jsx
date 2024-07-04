@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { useParams } from "react-router-dom";
-import Sidebar from "../components/Sidebar";
-import SearchBar from "../components/SearchBar";
-import AccountDetails from "../components/pending/AccountDetails";
-import CustomBox from "../components/pending/CustomBox";
-import {
-  HomeIcon,
-  ExclamationCircleIcon,
-  ClipboardDocumentCheckIcon,
-  Cog8ToothIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import CommentsBox from "../components/pending/CommentBox";
+import Sidebar from "../Sidebar";
+import SearchBar from "../SearchBar";
+import AccountDetails from "./AccountDetails";
+import CustomBox from "./CustomBoxView";
+import { ExclamationCircleIcon } from "@heroicons/react/24/outline";
+import CommentsBox from "./CommentBox";
+import PendingSSIConfirmModal from "./PendingSSIConfirmModal"; // Ensure this import is correct
 
-export default function Create() {
+export default function ViewPendingForm() {
   const { settlementId } = useParams();
   const [data, setData] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [ssiType, setSsiType] = useState(""); // Added to manage which SSI type
   const partyCommentsData = [
     {
       date: "02.06.2024 08:00:01",
@@ -72,56 +69,35 @@ export default function Create() {
     proposed_PSET: ["P", "", ""],
   });
 
-  const handleInputChange = (section, index, isBuy) => (event) => {
-    const { value } = event.target;
-    if (isBuy) {
-      setBuyInputs((prev) => {
-        const newSection = [...prev[section]];
-        newSection[index] = value;
-        return { ...prev, [section]: newSection };
-      });
-    } else {
-      setSellInputs((prev) => {
-        const newSection = [...prev[section]];
-        newSection[index] = value;
-        return { ...prev, [section]: newSection };
-      });
-    }
-  };
-
   useEffect(() => {
-    const staticData = {
-      settlementInstructionId: "123456",
-      currency: "USD",
-      securitiesName: "ABC Corp",
-      amount: 1000,
-      settlementInstructionParty: {
-        partyChain: [
+    const token = sessionStorage.getItem("jwtToken");
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `https://zentry-app.azurewebsites.net/api/zentry/party/settlementInstructions/${settlementId}`,
           {
-            partyQualifier: "BUYR",
-            party: { partyFormat: "P", identifierCode: "123" },
-          },
-          {
-            partyQualifier: "RECU",
-            party: { partyFormat: "P", identifierCode: "456" },
-          },
-        ],
-        proposedCounterPartyChain: [
-          {
-            partyQualifier: "SELL",
-            party: { partyFormat: "P", identifierCode: "789" },
-          },
-          {
-            partyQualifier: "DECU",
-            party: { partyFormat: "P", identifierCode: "012" },
-          },
-        ],
-      },
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Something went wrong");
+        }
+        const settlementInstructionID = await response.json();
+
+        console.log("settlementInstructionID", settlementInstructionID);
+        setData(settlementInstructionID);
+        setBuyInputs(populateStateFromData(settlementInstructionID, true));
+        setSellInputs(populateStateFromData(settlementInstructionID, false));
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    setData(staticData);
-    setBuyInputs(populateStateFromData(staticData, true));
-    setSellInputs(populateStateFromData(staticData, false));
+    fetchData();
   }, []);
 
   const populateStateFromData = (data, isBuy) => {
@@ -150,29 +126,44 @@ export default function Create() {
     return newState;
   };
 
+  const handleCheckboxChange = (type) => () => {
+    setSsiType(type);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
+
+  const handleSave = (comments) => {
+    // Logic to save the comments or any other data handling
+    console.log("Saved comments:", comments);
+    setModalOpen(false);
+  };
+
   return (
     <>
       <div>
         <Sidebar />
-        <div className="lg:pl-72">
+        <div className="lg:pl-64">
           <SearchBar />
-          <main className="py-10">
+          <main className="py-20 px-5">
             <div
-              className="max-w-9xl mx-auto p-5 bg-white rounded-md shadow"
+              className="max-w-9xl mx-auto p-5 bg-white rounded-md shadow overflow-auto"
               style={{ maxHeight: "80vh", overflowY: "auto" }}
             >
               <div>
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg leading-6 font-medium text-gray-900 flex flex-row">
-                    <Cog8ToothIcon
+                    <ExclamationCircleIcon
                       className="mr-3 h-6 w-6"
                       aria-hidden="true"
                     />{" "}
-                    Create
+                    Pending SSI Confirmation: {data?.settlementInstructionId}
                   </h2>
                 </div>
                 <div className="px-4 py-5 bg-white sm:p-6max-w-7xl">
-                  <div className="grid lg:grid-cols-6 md:grid-cols-4 gap-4">
+                  <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4">
                     <div className="flex flex-row justify-center col-span-2 items-center">
                       <label
                         htmlFor="securitiesId"
@@ -186,6 +177,7 @@ export default function Create() {
                           name="country"
                           autoComplete="country-name"
                           className="ml-4 pl-1 block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          disabled
                         >
                           <option>ISIN</option>
                           <option>SSI 1</option>
@@ -201,6 +193,7 @@ export default function Create() {
                         autoComplete="securities-id"
                         className="ml-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 border-black block w-full shadow-sm sm:text-sm border rounded-md"
                         value={data?.settlementInstructionId || "Loading..."}
+                        disabled
                       />
                     </div>
 
@@ -218,26 +211,8 @@ export default function Create() {
                         autoComplete="currency"
                         className="ml-4 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-black border rounded-md"
                         value={data?.currency || "Loading..."}
+                        disabled
                       />
-                    </div>
-                    <div className="flex flex-row justify-left col-span-2 items-center">
-                      <label
-                        htmlFor="securitiesId"
-                        className="block text-sm font-medium text-gray-900"
-                      >
-                        Party Side
-                      </label>
-                      <div className="">
-                        <select
-                          id="country"
-                          name="country"
-                          autoComplete="country-name"
-                          className="ml-4 pl-1 block rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        >
-                          <option>BUY</option>
-                          <option>SELL</option>
-                        </select>
-                      </div>
                     </div>
 
                     <div className="flex flex-row justify-center col-span-2 items-center">
@@ -254,6 +229,7 @@ export default function Create() {
                         autoComplete="securities-name"
                         className="mt-1 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-black border rounded-md"
                         value={data?.securitiesName || "Loading..."}
+                        disabled
                       />
                     </div>
 
@@ -271,6 +247,7 @@ export default function Create() {
                         autoComplete="quantity"
                         className="ml-4 p-2 p-2 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-black border rounded-md"
                         value={data?.amount || "Loading..."}
+                        disabled
                       />
                     </div>
                   </div>
@@ -296,6 +273,7 @@ export default function Create() {
                           name="country"
                           autoComplete="country-name"
                           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          disabled
                         >
                           <option>Select SSI from pre-configured list</option>
                           <option>SSI 1</option>
@@ -328,13 +306,14 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         selectOptions={[
                           { value: "P", label: "70E::DECL" },
                           { value: "Q", label: "95Q" },
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="BUYR"
@@ -349,13 +328,14 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         selectOptions={[
                           { value: "P", label: "70E::DECL" },
                           { value: "Q", label: "95Q" },
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="SELL"
@@ -370,13 +350,14 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         selectOptions={[
                           { value: "P", label: "70E::DECL" },
                           { value: "Q", label: "95Q" },
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="SELL Proposed"
@@ -394,13 +375,14 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         selectOptions={[
                           { value: "P", label: "70E::DECL" },
                           { value: "Q", label: "95Q" },
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="RECU Proposed"
@@ -418,13 +400,14 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         selectOptions={[
                           { value: "P", label: "70E::DECL" },
                           { value: "Q", label: "95Q" },
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="RECU"
@@ -439,13 +422,14 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         selectOptions={[
                           { value: "P", label: "70E::DECL" },
                           { value: "Q", label: "95Q" },
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="DECU"
@@ -460,7 +444,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1={1}
                         index2="97A::SAFE"
                         selectOptions={[
@@ -469,6 +453,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="DECU Proposed"
@@ -486,7 +471,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -495,6 +480,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="REI1 Proposed"
@@ -512,7 +498,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -521,6 +507,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="REI1"
@@ -535,7 +522,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -544,6 +531,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="DEI1"
@@ -558,7 +546,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -567,6 +555,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="DEI1 Proposed"
@@ -584,7 +573,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -593,6 +582,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="REAG Proposed"
@@ -610,7 +600,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={4}
                         selectOptions={[
@@ -619,6 +609,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="REAG"
@@ -633,7 +624,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={4}
                         selectOptions={[
@@ -642,6 +633,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="DEAG"
@@ -656,7 +648,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={4}
                         selectOptions={[
@@ -665,6 +657,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="DEAG Proposed"
@@ -682,7 +675,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={4}
                         selectOptions={[
@@ -691,6 +684,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="PSET Proposed"
@@ -708,7 +702,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -717,6 +711,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
 
                       <CustomBox
@@ -732,7 +727,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -741,6 +736,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="PSET"
@@ -755,7 +751,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
+                        
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -764,6 +760,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                       <CustomBox
                         title="PSET Proposed"
@@ -781,7 +778,6 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
-                        handleInputChange={handleInputChange}
                         index1="97A::SAFE"
                         index2={2}
                         selectOptions={[
@@ -790,6 +786,7 @@ export default function Create() {
                           { value: "R", label: "95R" },
                           { value: "S", label: "95S" },
                         ]}
+                        disabled
                       />
                     </div>
                     <div
@@ -819,7 +816,7 @@ export default function Create() {
                       >
                         <label>Confirm SSI</label>
                         <input
-                          onChange={handleInputChange}
+                          onChange={handleCheckboxChange("party")}
                           type="checkbox"
                           name="confirm"
                           value=""
@@ -837,7 +834,7 @@ export default function Create() {
                       >
                         <label>Confirm SSI</label>
                         <input
-                          onChange={handleInputChange}
+                          onChange={handleCheckboxChange("counterParty")}
                           type="checkbox"
                           name="confirm"
                           value=""
@@ -849,23 +846,29 @@ export default function Create() {
                 </div>
 
                 <div className="divide-y divide-gray-300 pt-8 flex justify-start">
-                  <button
-                    type="reset"
+                <button
+                    type="copyncreate"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Reset
+                    Copy & Create
                   </button>
                   <button
-                    type="reset"
+                    type="back"
                     className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4"
                   >
-                    Propose new C/P SSi
+                    Back
+                  </button>
+                  <button
+                    type="confirm SSI"
+                    className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ml-4"
+                  >
+                    Confirm SSI
                   </button>
                   <button
                     type="submit"
                     className="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-zentrybg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                   >
-                    Confirm SSI
+                    Edit
                   </button>
                 </div>
               </div>
@@ -873,6 +876,13 @@ export default function Create() {
           </main>
         </div>
       </div>
+      <PendingSSIConfirmModal
+        open={modalOpen}
+        handleClose={handleModalClose}
+        selectedAccount={data}
+        onSave={handleSave}
+        type={ssiType}
+      />
     </>
   );
 }

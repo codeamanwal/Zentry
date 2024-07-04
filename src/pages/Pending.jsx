@@ -4,7 +4,7 @@ import React from "react";
 import { Modal, Box, Button, CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import ViewPendingForm from "../components/ViewPendingForm";
+import ViewPendingForm from "../components/pending/ViewPendingForm";
 import Tabs from "../components/pending/Tabs";
 import { Audio } from "react-loader-spinner";
 import {
@@ -87,7 +87,7 @@ export default function Pending() {
 
   const handleView = (id) => {
     setSettlementID(id);
-    setOpen(true);
+    navigate(`/pending/view/${settlementID}`)
   };
 
   const handleClose = () => {
@@ -117,7 +117,7 @@ export default function Pending() {
       <Sidebar />
       <div className="lg:pl-64">
         <SearchBar />
-        <main className="py-10">
+        <main className="py-10 px-5">
           <div className="sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto p-5 bg-white rounded-md shadow">
               {loading ? (
@@ -216,29 +216,17 @@ export default function Pending() {
                                       )
                                     )}
                                   </td>
-                                  <td className="py-4 text-sm text-center flex flex-row">
-                                    <Button
-                                      className="rounded-md bg-brown-600 py-1 text-xs font-semibold text-white hover:bg-brown-500"
-                                      onClick={() =>
-                                        handleView(item.settlementInstructionId)
-                                      }
-                                    >
-                                      <EyeIcon
-                                        className="h-6 w-6"
-                                        aria-hidden="true"
-                                      />
-                                    </Button>
-                                    <Button
-                                      className="rounded-md bg-brown-600 py-1 text-xs font-semibold text-white hover:bg-brown-500"
-                                      onClick={() =>
-                                        handleEdit(item.settlementInstructionId)
-                                      }
-                                    >
-                                      <PencilSquareIcon
-                                        className="h-6 w-6"
-                                        aria-hidden="true"
-                                      />
-                                    </Button>
+                                  <td className="pt-6 text-sm text-center flex flex-row justify-center items-center">
+                                  <EyeIcon
+                                  className="h-6 w-6 cursor-pointer text-brown-600 hover:text-brown-500 mx-1"
+                                  aria-hidden="true"
+                                  onClick={() => handleView(item.settlementInstructionId)}
+                                />
+                                <PencilSquareIcon
+                                  className="h-6 w-6 cursor-pointer text-brown-600 hover:text-brown-500 mx-1"
+                                  aria-hidden="true"
+                                  onClick={() => handleEdit(item.settlementInstructionId)}
+                                />
                                   </td>
                                 </tr>
                               ))}
