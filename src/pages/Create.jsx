@@ -307,545 +307,108 @@ export default function Create() {
                   </div>
                 </div>
                 <div>
-                  <form className="space-y-8 divide-y divide-gray-300">
-                    <div
-                      className="mt-10 pt-10 grid grid-cols-4 gap-3 mr-3"
-                      style={{ minWidth: "1385px" }}
-                    >
-                      <CustomBox
-                        title="BUYR Proposed"
-                        inputs={buyInputs.proposed_BUYR}
-                        setInputs={(newValues) =>
-                          setBuyInputs({
-                            ...buyInputs,
-                            proposed_BUYR: newValues,
-                          })
-                        }
-                        fieldId="proposed_BUYR"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="BUYR"
-                        inputs={buyInputs.BUYR}
-                        setInputs={(newValues) =>
-                          setBuyInputs({ ...buyInputs, BUYR: newValues })
-                        }
-                        fieldId="BUYR"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="SELL"
-                        inputs={sellInputs.SELL}
-                        setInputs={(newValues) =>
-                          setSellInputs({ ...sellInputs, SELL: newValues })
-                        }
-                        fieldId="SELL"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="SELL Proposed"
-                        inputs={sellInputs.proposed_SELL}
-                        setInputs={(newValues) =>
-                          setSellInputs({
-                            ...sellInputs,
-                            proposed_SELL: newValues,
-                          })
-                        }
-                        fieldId="proposed_SELL"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="RECU Proposed"
-                        inputs={buyInputs.proposed_RECU}
-                        setInputs={(newValues) =>
-                          setBuyInputs({
-                            ...buyInputs,
-                            proposed_RECU: newValues,
-                          })
-                        }
-                        fieldId="proposed_RECU"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="RECU"
-                        inputs={buyInputs.RECU}
-                        setInputs={(newValues) =>
-                          setBuyInputs({ ...buyInputs, RECU: newValues })
-                        }
-                        fieldId="RECU"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="DECU"
-                        inputs={sellInputs.DECU}
-                        setInputs={(newValues) =>
-                          setSellInputs({ ...sellInputs, DECU: newValues })
-                        }
-                        fieldId="DECU"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1={1}
-                        index2="97A::SAFE"
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="DECU Proposed"
-                        inputs={sellInputs.proposed_DECU}
-                        setInputs={(newValues) =>
-                          setSellInputs({
-                            ...sellInputs,
-                            proposed_DECU: newValues,
-                          })
-                        }
-                        fieldId="proposed_DECU"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="REI1 Proposed"
-                        inputs={buyInputs.proposed_REI1}
-                        setInputs={(newValues) =>
-                          setBuyInputs({
-                            ...buyInputs,
-                            proposed_REI1: newValues,
-                          })
-                        }
-                        fieldId="proposed_REI1"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="REI1"
-                        inputs={buyInputs.REI1}
-                        setInputs={(newValues) =>
-                          setBuyInputs({ ...buyInputs, REI1: newValues })
-                        }
-                        fieldId="REI1"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="DEI1"
-                        inputs={sellInputs.DEI1}
-                        setInputs={(newValues) =>
-                          setSellInputs({ ...sellInputs, DEI1: newValues })
-                        }
-                        fieldId="DEI1"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="DEI1 Proposed"
-                        inputs={sellInputs.proposed_DEI1}
-                        setInputs={(newValues) =>
-                          setSellInputs({
-                            ...sellInputs,
-                            proposed_DEI1: newValues,
-                          })
-                        }
-                        fieldId="DEI1"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="REAG Proposed"
-                        inputs={buyInputs.proposed_REAG}
-                        setInputs={(newValues) =>
-                          setBuyInputs({
-                            ...buyInputs,
-                            proposed_REAG: newValues,
-                          })
-                        }
-                        fieldId="REAG"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={4}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="REAG"
-                        inputs={buyInputs.REAG}
-                        setInputs={(newValues) =>
-                          setBuyInputs({ ...buyInputs, REAG: newValues })
-                        }
-                        fieldId="REAG"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={4}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="DEAG"
-                        inputs={sellInputs.DEAG}
-                        setInputs={(newValues) =>
-                          setSellInputs({ ...sellInputs, DEAG: newValues })
-                        }
-                        fieldId="DEAG"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={4}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="DEAG Proposed"
-                        inputs={sellInputs.proposed_DEAG}
-                        setInputs={(newValues) =>
-                          setSellInputs({
-                            ...sellInputs,
-                            proposed_DEAG: newValues,
-                          })
-                        }
-                        fieldId="DEAG"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={4}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="PSET Proposed"
-                        inputs={buyInputs.proposed_PSET}
-                        setInputs={(newValues) =>
-                          setBuyInputs({
-                            ...buyInputs,
-                            proposed_PSET: newValues,
-                          })
-                        }
-                        fieldId="PSET"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-
-                      <CustomBox
-                        title="PSET"
-                        inputs={buyInputs.PSET}
-                        setInputs={(newValues) =>
-                          setBuyInputs({ ...buyInputs, PSET: newValues })
-                        }
-                        fieldId="PSET_1"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="PSET"
-                        inputs={sellInputs.PSET}
-                        setInputs={(newValues) =>
-                          setSellInputs({ ...sellInputs, PSET: newValues })
-                        }
-                        fieldId="PSET_2"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                      <CustomBox
-                        title="PSET Proposed"
-                        inputs={sellInputs.proposed_PSET}
-                        setInputs={(newValues) =>
-                          setSellInputs({
-                            ...sellInputs,
-                            proposed_PSET_2: newValues,
-                          })
-                        }
-                        fieldId="PSET_2"
-                        labelOptions={[
-                          { value: "P", label: "95P" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                        handleInputChange={handleInputChange}
-                        index1="97A::SAFE"
-                        index2={2}
-                        selectOptions={[
-                          { value: "P", label: "70E::DECL" },
-                          { value: "Q", label: "95Q" },
-                          { value: "R", label: "95R" },
-                          { value: "S", label: "95S" },
-                        ]}
-                      />
-                    </div>
-                    <div
-                      className="grid grid-cols-2 gap-3"
-                      style={{ minWidth: "1380px" }}
-                    >
-                      <CommentsBox
-                        title="Comments / remarks - Party side"
-                        commentsData={partyCommentsData}
-                        user={currentUser}
-                        isActive={isPartySide}
-                      />
-                      <CommentsBox
-                        title="Comments / remarks - Counter Party side"
-                        commentsData={counterPartyCommentsData}
-                        user={currentUser}
-                        isActive={!isPartySide}
-                      />
-                      <Box
-                        sx={{
-                          padding: "5px",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          margin: "10px 0 0 0",
-                        }}
-                      >
-                        <label>Confirm SSI</label>
-                        <input
-                          onChange={handleInputChange}
-                          type="checkbox"
-                          name="confirm"
-                          value=""
-                          style={{ marginLeft: "5px" }}
+                <form className="space-y-8 divide-y divide-gray-300 z-5">
+                <div className="mt-10 pt-10 grid grid-cols-4 gap-3 mr-3" style={{ minWidth: "1385px", position: "relative" }}>
+                  {[
+                    { title: 'BUYR Proposed', inputs: buyInputs.proposed_BUYR, setInputs: (newValues) => setBuyInputs({ ...buyInputs, proposed_BUYR: newValues }) },
+                    { title: 'BUYR', inputs: buyInputs.BUYR, setInputs: (newValues) => setBuyInputs({ ...buyInputs, BUYR: newValues }) },
+                    { title: 'SELL', inputs: sellInputs.SELL, setInputs: (newValues) => setSellInputs({ ...sellInputs, SELL: newValues }) },
+                    { title: 'SELL Proposed', inputs: sellInputs.proposed_SELL, setInputs: (newValues) => setSellInputs({ ...sellInputs, proposed_SELL: newValues }) },
+                    { title: 'RECU Proposed', inputs: buyInputs.proposed_RECU, setInputs: (newValues) => setBuyInputs({ ...buyInputs, proposed_RECU: newValues }) },
+                    { title: 'RECU', inputs: buyInputs.RECU, setInputs: (newValues) => setBuyInputs({ ...buyInputs, RECU: newValues }) },
+                    { title: 'DECU', inputs: sellInputs.DECU, setInputs: (newValues) => setSellInputs({ ...sellInputs, DECU: newValues }) },
+                    { title: 'DECU Proposed', inputs: sellInputs.proposed_DECU, setInputs: (newValues) => setSellInputs({ ...sellInputs, proposed_DECU: newValues }) },
+                    { title: 'REI1 Proposed', inputs: buyInputs.proposed_REI1, setInputs: (newValues) => setBuyInputs({ ...buyInputs, proposed_REI1: newValues }) },
+                    { title: 'REI1', inputs: buyInputs.REI1, setInputs: (newValues) => setBuyInputs({ ...buyInputs, REI1: newValues }) },
+                    { title: 'DEI1', inputs: sellInputs.DEI1, setInputs: (newValues) => setSellInputs({ ...sellInputs, DEI1: newValues }) },
+                    { title: 'DEI1 Proposed', inputs: sellInputs.proposed_DEI1, setInputs: (newValues) => setSellInputs({ ...sellInputs, proposed_DEI1: newValues }) },
+                    { title: 'REAG Proposed', inputs: buyInputs.proposed_REAG, setInputs: (newValues) => setBuyInputs({ ...buyInputs, proposed_REAG: newValues }) },
+                    { title: 'REAG', inputs: buyInputs.REAG, setInputs: (newValues) => setBuyInputs({ ...buyInputs, REAG: newValues }) },
+                    { title: 'DEAG', inputs: sellInputs.DEAG, setInputs: (newValues) => setSellInputs({ ...sellInputs, DEAG: newValues }) },
+                    { title: 'DEAG Proposed', inputs: sellInputs.proposed_DEAG, setInputs: (newValues) => setSellInputs({ ...sellInputs, proposed_DEAG: newValues }) },
+                    { title: 'PSET Proposed', inputs: buyInputs.proposed_PSET, setInputs: (newValues) => setBuyInputs({ ...buyInputs, proposed_PSET: newValues }) },
+                    { title: 'PSET', inputs: buyInputs.PSET, setInputs: (newValues) => setBuyInputs({ ...buyInputs, PSET: newValues }) },
+                    { title: 'PSET', inputs: sellInputs.PSET, setInputs: (newValues) => setSellInputs({ ...sellInputs, PSET: newValues }) },
+                    { title: 'PSET Proposed', inputs: sellInputs.proposed_PSET, setInputs: (newValues) => setSellInputs({ ...sellInputs, proposed_PSET: newValues }) },
+                  ].map((box, index) => (
+                    <div key={index} className="box-container9">
+                      <div className="relative box9">
+                        <CustomBox
+                          title={box.title}
+                          inputs={box.inputs}
+                          setInputs={box.setInputs}
+                          fieldId={box.title.replace(/\s+/g, '_')}
+                          labelOptions={[
+                            { value: "P", label: "95P" },
+                            { value: "Q", label: "95Q" },
+                            { value: "R", label: "95R" },
+                            { value: "S", label: "95S" },
+                          ]}
+                          handleInputChange={handleInputChange}
+                          selectOptions={[
+                            { value: "P", label: "70E::DECL" },
+                            { value: "Q", label: "95Q" },
+                            { value: "R", label: "95R" },
+                            { value: "S", label: "95S" },
+                          ]}
                         />
-                      </Box>
-                      <Box
-                        sx={{
-                          padding: "5px",
-                          display: "flex",
-                          justifyContent: "center",
-                          alignItems: "center",
-                          margin: "10px 0 0 0",
-                        }}
-                      >
-                        <label>Confirm SSI</label>
-                        <input
-                          onChange={handleInputChange}
-                          type="checkbox"
-                          name="confirm"
-                          value=""
-                          style={{ marginLeft: "5px", border: "1px red" }}
-                        />
-                      </Box>
+                      </div>
                     </div>
-                  </form>
+                  ))}
+                  <div className="vertical-line"></div>
+                  <div className="vertical-line" style={{ left: '38%', borderRight:"6px solid #84cc16" }}></div>
+                  <div className="vertical-line" style={{ left: '62%' , borderRight:"6px solid #FF0000"}}></div>
+                  <div className="vertical-line" style={{ left: '88%', borderRight: "6px solid lightgray"}}></div>
+                </div>
+                <div className="grid grid-cols-2 gap-3" style={{ minWidth: "1380px" }}>
+                  <CommentsBox
+                    title="Comments / remarks - Party side"
+                    commentsData={partyCommentsData}
+                    user={currentUser}
+                    isActive={isPartySide}
+                  />
+                  <CommentsBox
+                    title="Comments / remarks - Counter Party side"
+                    commentsData={counterPartyCommentsData}
+                    user={currentUser}
+                    isActive={!isPartySide}
+                  />
+                  <Box
+                    sx={{
+                      padding: "5px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      margin: "10px 0 0 0",
+                    }}
+                  >
+                    <label>Confirm SSI</label>
+                    <input
+                      type="checkbox"
+                      name="confirm"
+                      value=""
+                      style={{ marginLeft: "5px" }}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      padding: "5px",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      margin: "10px 0 0 0",
+                    }}
+                  >
+                    <label>Confirm SSI</label>
+                    <input
+                      type="checkbox"
+                      name="confirm"
+                      value=""
+                      style={{ marginLeft: "5px", border: "1px red" }}
+                    />
+                  </Box>
+                </div>
+              </form>
                 </div>
 
                 <div className="divide-y divide-gray-300 pt-8 flex justify-start">

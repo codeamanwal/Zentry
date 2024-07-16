@@ -116,7 +116,10 @@ function AccountDetails({ party, counterParty }) {
               size="small"
               fullWidth
               value={partyInputs.accountNumber}
-              InputProps={{ readOnly: true }}
+              InputProps={{
+                readOnly: true,
+                style: { backgroundColor: "#f0f0f0" },
+              }}
             />
           </Box>
           <Box>
@@ -126,7 +129,10 @@ function AccountDetails({ party, counterParty }) {
               size="small"
               fullWidth
               value={partyInputs.domain}
-              InputProps={{ readOnly: true }}
+              InputProps={{
+                readOnly: true,
+                style: { backgroundColor: "#f0f0f0" },
+              }}
             />
           </Box>
           <Box>
@@ -136,7 +142,10 @@ function AccountDetails({ party, counterParty }) {
               size="small"
               fullWidth
               value={partyInputs.accountName}
-              InputProps={{ readOnly: true }}
+              InputProps={{
+                readOnly: true,
+                style: { backgroundColor: "#f0f0f0" },
+              }}
             />
           </Box>
           <Box>
@@ -148,7 +157,10 @@ function AccountDetails({ party, counterParty }) {
                 fullWidth
                 value={partyInputs.emailId}
                 label="Email"
-                InputProps={{ readOnly: true }}
+                InputProps={{
+                  readOnly: true,
+                  style: { backgroundColor: "#f0f0f0" },
+                }}
               />
               <TextField
                 variant="outlined"
@@ -156,7 +168,10 @@ function AccountDetails({ party, counterParty }) {
                 fullWidth
                 value={partyInputs.phoneNo}
                 label="Phone"
-                InputProps={{ readOnly: true }}
+                InputProps={{
+                  readOnly: true,
+                  style: { backgroundColor: "#f0f0f0" },
+                }}
               />
               <TextField
                 variant="outlined"
@@ -164,12 +179,15 @@ function AccountDetails({ party, counterParty }) {
                 fullWidth
                 value={partyInputs.faxNo}
                 label="Fax"
-                InputProps={{ readOnly: true }}
+                InputProps={{
+                  readOnly: true,
+                  style: { backgroundColor: "#f0f0f0" },
+                }}
               />
             </Box>
           </Box>
         </Box>
-        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }} onClick={() => handleClickOpen(partyInputs, "party")}>
+        <IconButton sx={{ position: "absolute", top: "4px", right: "10px" }} onClick={() => handleClickOpen(partyInputs, "party")}>
           <EditIcon />
         </IconButton>
       </Box>
@@ -213,7 +231,10 @@ function AccountDetails({ party, counterParty }) {
               size="small"
               fullWidth
               value={counterInputs.accountNumber}
-              InputProps={{ readOnly: true }}
+              InputProps={{
+                readOnly: true,
+                style: { backgroundColor: "#f0f0f0" },
+              }}
             />
           </Box>
           <Box>
@@ -223,7 +244,10 @@ function AccountDetails({ party, counterParty }) {
               size="small"
               fullWidth
               value={counterInputs.domain}
-              InputProps={{ readOnly: true }}
+              InputProps={{
+                readOnly: true,
+                style: { backgroundColor: "#f0f0f0" },
+              }}
             />
           </Box>
           <Box>
@@ -233,7 +257,10 @@ function AccountDetails({ party, counterParty }) {
               size="small"
               fullWidth
               value={counterInputs.accountName}
-              InputProps={{ readOnly: true }}
+              InputProps={{
+                readOnly: true,
+                style: { backgroundColor: "#f0f0f0" },
+              }}
             />
           </Box>
           <Box>
@@ -245,7 +272,10 @@ function AccountDetails({ party, counterParty }) {
                 fullWidth
                 value={counterInputs.emailId}
                 label="Email"
-                InputProps={{ readOnly: true }}
+                InputProps={{
+                  readOnly: true,
+                  style: { backgroundColor: "#f0f0f0" },
+                }}
               />
               <TextField
                 variant="outlined"
@@ -253,7 +283,10 @@ function AccountDetails({ party, counterParty }) {
                 fullWidth
                 value={counterInputs.phoneNo}
                 label="Phone"
-                InputProps={{ readOnly: true }}
+                InputProps={{
+                  readOnly: true,
+                  style: { backgroundColor: "#f0f0f0" },
+                }}
               />
               <TextField
                 variant="outlined"
@@ -261,12 +294,15 @@ function AccountDetails({ party, counterParty }) {
                 fullWidth
                 value={counterInputs.faxNo}
                 label="Fax"
-                InputProps={{ readOnly: true }}
+                InputProps={{
+                  readOnly: true,
+                  style: { backgroundColor: "#f0f0f0" },
+                }}
               />
             </Box>
           </Box>
         </Box>
-        <IconButton sx={{ position: "absolute", top: "10px", right: "10px" }} onClick={() => handleClickOpen(counterInputs, "counterParty")}>
+        <IconButton sx={{ position: "absolute", top: "5px", right: "10px" }} onClick={() => handleClickOpen(counterInputs, "counterParty")}>
           <EditIcon />
         </IconButton>
       </Box>

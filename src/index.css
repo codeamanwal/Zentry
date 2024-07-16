@@ -25,3 +25,44 @@ code {
 html, body, #root {
   height: 100%;
 }
+
+.form-container9 {
+  position: relative;
+}
+
+.box-container9 {
+  position: relative;
+}
+
+.box9 {
+  padding-right: 10px;
+  background-color: white;
+  z-index: 5;
+}
+
+.vertical-line {
+  border-right: 6px solid lightgray;
+  height: 83%;
+  position: absolute;
+  top: 40px;
+  left: 12%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+.vertical-line:nth-child(2) {
+  border-right: 6px solid #84cc16;
+  left: 35%;
+}
+
+.vertical-line:nth-child(3) {
+  border-right: 6px solid #FF0000;
+  left: 60%;
+}
+.vertical-line:nth-child(4) {
+  border-right: 6px solid lightgray;
+  left: 88%;
+}
+
+
+

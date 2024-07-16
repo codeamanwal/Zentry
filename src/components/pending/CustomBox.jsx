@@ -39,6 +39,7 @@ const CustomBox = ({
         border: `2px solid ${getBorderColor()}`,
         padding: "15px",
         position: "relative",
+        zIndex: "5"
       }}
     >
       <Typography
